@@ -1,5 +1,6 @@
 
 /// Header
+#include <Arduino.h>
 #include "capstone_functions.h"
  
 
@@ -28,5 +29,13 @@ void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
     uint16_t analog_read = seesaw.analogRead(analog_in);
     float fade = analog_read;
     amp.gain(fade/1023);
+}
+ void mutecontrol(AudioMixer4 &mixer, int channel_num, bool &state){
+  	if (state == true) {
+     		mute(mixer, channel_num);
+  	}
+  	else {
+    		unmute(mixer, channel_num);
+  	}
 }
 
