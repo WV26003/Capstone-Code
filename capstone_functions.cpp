@@ -1,5 +1,4 @@
 
-
 /// Header
 #include "capstone_functions.h"
  
@@ -25,8 +24,8 @@ void unmute(AudioMixer4 &mixer, int channel_num){
     mixer.gain(channel_num, 1);
 }
 
-void linear_fader(Adafruit_seesaw &seesaw, AduioAmplifier &amp, int analog_in){
-    unint16_t analog_read = seesaw.analogRead(analog_in);
+void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
+    uint16_t analog_read = seesaw.analogRead(analog_in);
     float fade = analog_read;
     amp.gain(fade/1023);
 }

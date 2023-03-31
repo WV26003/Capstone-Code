@@ -14,7 +14,7 @@
 //Function prototypes
 
 void button_toggle(QwiicButton &button, bool &ledState); // Qwiic Button On/OFF toggle
-void linear_fader(Adafruit_seesaw &seesaw, AduioAmplifier &amp, unint16_t analog_read);
+void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, uint16_t analog_read);
 void mute(AudioMixer4 &mixer, int channel_num);
 void unmute(AudioMixer4 &mixer, int channel_num);
 
