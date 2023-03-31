@@ -40,3 +40,10 @@ void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
   	}
 }
 
+void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &last, bool &cur){
+    last = cur;
+    cur = seesaw.digitalRead(SS_SWITCH);
+    if(last == true && cur == false) {
+        Serial.println("The button is pressed");
+    }
+}
