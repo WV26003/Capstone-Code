@@ -21,7 +21,7 @@ void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_read)
 void mute(AudioMixer4 &mixer, int channel_num);
 void unmute(AudioMixer4 &mixer, int channel_num);
 void mutecontrol(AudioMixer4 &mixer, int channel_num, bool &Sstate);
-void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, int &last, int &cur);
+void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &LEDState);
 
 
 

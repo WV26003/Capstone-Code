@@ -1,4 +1,3 @@
-
 /// Header
 #include <Arduino.h>
 #include "capstone_functions.h"
@@ -40,10 +39,15 @@ void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
   	}
 }
 
-void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &last, bool &cur){
-    last = cur;
-    cur = seesaw.digitalRead(SS_SWITCH);
-    if(last == true && cur == false) {
+void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &LEDState){
+    if(!seesaw.digitalRead(SS_SWITCH)) {
+        LEDState = !LEDState;
         Serial.println("The button is pressed");
+         if (LEDState) {
+            neopixel.setPixelColor(0, neopixel.Color(255,0,0));
+        } else {
+            neopixel.setPixelColor(0, neopixel.Color(0,0,0));
+        }
+        neopixel.show();
     }
 }
