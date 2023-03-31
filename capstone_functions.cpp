@@ -28,7 +28,8 @@ void unmute(AudioMixer4 &mixer, int channel_num){
 void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
     uint16_t analog_read = seesaw.analogRead(analog_in);
     float fade = analog_read;
-    amp.gain(fade/1023);
+    float scalar = (fade/1023);
+    amp.gain(scalar);
 }
  void mutecontrol(AudioMixer4 &mixer, int channel_num, bool &state){
   	if (state == true) {

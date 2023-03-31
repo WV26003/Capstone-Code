@@ -65,7 +65,6 @@ void setup() {
 
 void loop() {
   linear_fader(seesaw, amp1, ANALOGIN);
-  Serial.println(testing);
   button_toggle(button1, ledState1);
   button_toggle(button2, ledState2);
   mutecontrol(mixer1, channel_1, ledState1);

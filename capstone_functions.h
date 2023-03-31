@@ -3,12 +3,14 @@
 
 
 // Libraries and Headers
+#include <Arduino.h>
 #include <SparkFun_Qwiic_Button.h>
 #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
 #include <SerialFlash.h>
+#include <math.h>
 #include "Adafruit_seesaw.h"
 
 //Function prototypes
