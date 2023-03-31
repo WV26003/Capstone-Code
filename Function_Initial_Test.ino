@@ -1,7 +1,5 @@
 #include <capstone_functions.h>
 
-
-
 // GUItool: begin automatically generated code
 AudioInputI2S            i2s1;           //xy=74,462
 AudioMixer4              mixer1;         //xy=439,466
@@ -26,9 +24,9 @@ QwiicButton button2;
 uint8_t brightness = 100;   //The brightness to set the LED to when the button is pushed
 bool ledState1 = false;      //Can be any value between 0 (off) and 255 (max)
 bool ledState2 = false;
-void button_toggle(QwiicButton &button, bool &ledState);
 
-//Audio Channels
+//Audio Channels#include <capstone_functions.h>
+
 int channel_1 = 0;
 int channel_2 = 1;
 int channel_3 = 2;
@@ -41,11 +39,11 @@ void setup() {
   
   AudioMemory(6);
   audioShield.enable();
-  audioShield.inputSelect(AUDIO_INPUT_MIC);
+  audioShield.inputSelect(AUDIO_INPUT_LINEIN);
   audioShield.volume(0.5);
 
   Serial.begin(115200);
-  
+  Wire.begin();
   Wire1.begin();
   if (button1.begin(0x5B, Wire1) == false) {
     Serial.println("Device did not acknowledge! Freezing.");
@@ -56,28 +54,20 @@ void setup() {
     Serial.println("Device did not acknowledge! Freezing.");
     while (1);
   }
-  
+
+  if (!seesaw.begin(DEFAULT_I2C_ADDR)) {
+    Serial.println("seesaw not found");
+    while (1);
+  }
+  button1.LEDoff();
+  button2.LEDoff();
 }
 
 void loop() {
   linear_fader(seesaw, amp1, ANALOGIN);
+  Serial.println(testing);
   button_toggle(button1, ledState1);
   button_toggle(button2, ledState2);
-
-//Channel 1 muting/unmuting based on LED status
-  if (button1.LEDon() == true) {
-     mute(mixer1, channel_1);
-  }
-  else {
-    unmute(mixer1, channel_1);
-  }
-
-//Channel 2 muting/unmuting based on LED status  
-  if (button1.LEDon() == true) {
-    (mixer1, channel_2);
-  }
-  else {
-    unmute(mixer1, channel_2);
-  }
-
+  mutecontrol(mixer1, channel_1, ledState1);
+  mutecontrol(mixer1, channel_2, ledState2);
 }
