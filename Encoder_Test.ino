@@ -2,16 +2,17 @@
  
 #define SS_SWITCH        24
 #define SS_NEOPIX        6
-
 #define SEESAW_ADDR          0x36
 
 Adafruit_seesaw ss;
 seesaw_NeoPixel sspixel = seesaw_NeoPixel(1, SS_NEOPIX, NEO_GRB + NEO_KHZ800);
 
 int32_t encoder_position;
+uint32_t lastDebounceTime;
 bool last = false;
 bool cur = false;
 bool led = false;
+
 
  
  void setup() {
@@ -43,6 +44,6 @@ bool led = false;
 }
 
 void loop() {
-  encoder_button(ss, sspixel, SS_SWITCH, SS_NEOPIX, led);
+  encoder_button(ss, sspixel, SS_SWITCH, SS_NEOPIX, led, lastDebounceTime, last);
 
 }
