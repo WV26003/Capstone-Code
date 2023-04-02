@@ -1,0 +1,19 @@
+test
+
+
+void setup() {
+  AudioMemory(12);
+  Wire.begin();
+  
+  // Initialize the first audio shield with the default I2C address
+  audioShield1.address(0x0A);
+  audioShield1.enable();
+  audioShield1.volume(0.5);
+  
+  // Initialize the second audio shield with the modified I2C address
+  audioShield2.address(0x2A);
+  audioShield2.enable();
+  audioShield2.volume(0.5);
+  
+  // Your remaining setup code
+}
