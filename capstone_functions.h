@@ -15,13 +15,16 @@
 #include <seesaw_neopixel.h>
 
 //Function prototypes
-
+// Qwiic Button
 void button_toggle(QwiicButton &button, bool &ledState); // Qwiic Button On/OFF toggle
+//Linear Fader Control
 void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_read);
+//Muting Stuff
 void mute(AudioMixer4 &mixer, int channel_num);
 void unmute(AudioMixer4 &mixer, int channel_num);
 void mutecontrol(AudioMixer4 &mixer, int channel_num, bool &Sstate);
-void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &LEDState, uint32_t &lastDebounceTime, bool &lastButtonState) ;
+//Enocoder Functions
+void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &LEDState, uint32_t &lastDebounceTime, bool &lastButtonState);
 void toggleNeoPixel(seesaw_NeoPixel &neopixel);
 bool debounceButton(bool buttonPressed, bool &LEDState, uint32_t &lastDebounceTime, bool &lastButtonState);
 bool readEncoderButton(Adafruit_seesaw &seesaw, int SS_SWITCH);
