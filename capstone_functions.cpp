@@ -1,7 +1,8 @@
 /// Header
 #include <Arduino.h>
 #include "capstone_functions.h"
- 
+#define BUTTON_DEBOUNCE_TIME 20 
+
 
  //Function Defintions
 void button_toggle(QwiicButton &button, bool &ledState){
@@ -27,7 +28,7 @@ void unmute(AudioMixer4 &mixer, int channel_num){
 void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
     uint16_t analog_read = seesaw.analogRead(analog_in);
     float fade = analog_read;
-    float scalar = (fade/1023);
+    float scalar = (fade/1023)*3.16;
     amp.gain(scalar);
 }
  void mutecontrol(AudioMixer4 &mixer, int channel_num, bool &state){
@@ -39,15 +40,44 @@ void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
   	}
 }
 
-void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &LEDState){
-    if(!seesaw.digitalRead(SS_SWITCH)) {
-        LEDState = !LEDState;
-        Serial.println("The button is pressed");
-         if (LEDState) {
-            neopixel.setPixelColor(0, neopixel.Color(255,0,0));
-        } else {
-            neopixel.setPixelColor(0, neopixel.Color(0,0,0));
+bool readEncoderButton(Adafruit_seesaw &seesaw, int SS_SWITCH) {
+    return !seesaw.digitalRead(SS_SWITCH);
+}
+
+bool debounceButton(bool buttonPressed, bool &LEDState, uint32_t &lastDebounceTime, bool &lastButtonState) {
+    bool stateChanged = false;
+    if (buttonPressed != lastButtonState) {
+        lastDebounceTime = millis();
+    }
+
+    if ((millis() - lastDebounceTime) > BUTTON_DEBOUNCE_TIME) {
+        if (buttonPressed != LEDState) {
+            LEDState = buttonPressed;
+            stateChanged = true;
         }
-        neopixel.show();
+    }
+
+    lastButtonState = buttonPressed;
+    return stateChanged;
+}
+
+void toggleNeoPixel(seesaw_NeoPixel &neopixel) {
+    uint32_t currentColor = neopixel.getPixelColor(0);
+    if (currentColor == neopixel.Color(0, 0, 0)) {
+        neopixel.setPixelColor(0, neopixel.Color(0, 255, 0));
+    } else {
+        neopixel.setPixelColor(0, neopixel.Color(0, 0, 0));
+    }
+    neopixel.show();
+}
+
+void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &LEDState, uint32_t &lastDebounceTime, bool &lastButtonState) {
+    bool encoderButtonPressed = readEncoderButton(seesaw, SS_SWITCH);
+    bool stateChanged = debounceButton(encoderButtonPressed, LEDState, lastDebounceTime, lastButtonState);
+
+    if (stateChanged && LEDState) {
+        toggleNeoPixel(neopixel);
     }
 }
+
+
