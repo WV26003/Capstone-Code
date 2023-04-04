@@ -12,7 +12,19 @@
 #include <SerialFlash.h>
 #include <math.h>
 #include "Adafruit_seesaw.h"
+#include "Adafruit_GFX.h"
+#include "Adafruit_RA8875.h"
 #include <seesaw_neopixel.h>
+
+//Constants
+
+//Touchscreen consts
+const int TS_LEFT = 40;
+const int TS_RT = 980;
+const int TS_TOP = 120;
+const int TS_BOT = 920;
+const unsigned long debounceTime = 200;
+
 
 //Function prototypes
 // Qwiic Button
@@ -28,6 +40,9 @@ void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_S
 void toggleNeoPixel(seesaw_NeoPixel &neopixel);
 bool debounceButton(bool buttonPressed, bool &LEDState, uint32_t &lastDebounceTime, bool &lastButtonState);
 bool readEncoderButton(Adafruit_seesaw &seesaw, int SS_SWITCH);
+//Touchscreen
+bool isTSButtonPressed(uint16_t x, uint16_t y);
+void TSButtonState(bool buttonPressed, bool &push, unsigned long &lastButtonPress); 
 
 
 

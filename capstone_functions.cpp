@@ -3,7 +3,6 @@
 #include "capstone_functions.h"
 #define BUTTON_DEBOUNCE_TIME 20 
 
-
  //Function Defintions
 void button_toggle(QwiicButton &button, bool &ledState){
    if (button.hasBeenClicked()) {
@@ -80,4 +79,15 @@ void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_S
     }
 }
 
+bool isTSButtonPressed(uint16_t x, uint16_t y) {
+  return (x >= 350) && (x <= 450) && (y >= 200) && (y <= 280);
+}
+
+void TSButtonState(bool buttonPressed, bool &push, unsigned long &lastButtonPress) {  
+  unsigned long currentMillis = millis();
+  if (buttonPressed && (currentMillis - lastButtonPress > debounceTime)) {
+    push = !push;
+    lastButtonPress = currentMillis;
+  }
+}
 
