@@ -26,6 +26,7 @@ const int TS_BOT = 920;
 const unsigned long debounceTime = 200;
 
 
+
 //Function prototypes
 // Qwiic Button
 void button_toggle(QwiicButton &button, bool &ledState); // Qwiic Button On/OFF toggle
@@ -34,15 +35,17 @@ void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_read)
 //Muting Stuff
 void mute(AudioMixer4 &mixer, int channel_num);
 void unmute(AudioMixer4 &mixer, int channel_num);
-void mutecontrol(AudioMixer4 &mixer, int channel_num, bool &Sstate);
+void output_mix_mute_control(AudioMixer4 &mixer, int channel_num, bool &Sstate);
 //Enocoder Functions
 void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &LEDState, uint32_t &lastDebounceTime, bool &lastButtonState);
 void toggleNeoPixel(seesaw_NeoPixel &neopixel);
 bool debounceButton(bool buttonPressed, bool &LEDState, uint32_t &lastDebounceTime, bool &lastButtonState);
 bool readEncoderButton(Adafruit_seesaw &seesaw, int SS_SWITCH);
+void encoder_preamp(Adafruit_seesaw &seesaw, AudioControlSGTL5000 sgtl5000, int32_t &encoder_position);
+void encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encoder_position);
 //Touchscreen
-bool isTSButtonPressed(uint16_t x, uint16_t y);
-void TSButtonState(bool buttonPressed, bool &push, unsigned long &lastButtonPress); 
+
+
 
 
 
