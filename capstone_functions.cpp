@@ -3,6 +3,8 @@
 #include "capstone_functions.h"
 #define BUTTON_DEBOUNCE_TIME 20 
 
+
+
  //Function Defintions
 void button_toggle(QwiicButton &button, bool &ledState){
    if (button.hasBeenClicked()) {
@@ -29,8 +31,12 @@ void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
     float fade = analog_read;
     float scalar = (fade/1023)*3.16;
     amp.gain(scalar);
+
+	Serial.print(scalar);
+	Serial.print(", ");
 }
- void mutecontrol(AudioMixer4 &mixer, int channel_num, bool &state){
+
+void output_mix_mute_control(AudioMixer4 &mixer, int channel_num, bool &state){
   	if (state == true) {
      		mute(mixer, channel_num);
   	}
@@ -79,15 +85,103 @@ void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_S
     }
 }
 
-bool isTSButtonPressed(uint16_t x, uint16_t y) {
-  return (x >= 350) && (x <= 450) && (y >= 200) && (y <= 280);
+
+/*
+
+void encoder_preamp(Adafruit_seesaw &seesaw, AudioControlSGTL5000 sgtl5000, int32_t &encoder_position) {
+	int32_t new_position = seesaw.getEncoderPosition();
+  	// did we move around?
+  	if (encoder_position != new_position) {
+    		if ((new_position < 21) && (new_position > -1)) {
+    			float position_math = new_position;
+			int preamp = round((position_math/20) * 63);
+			sgt15000.micGain(preamp);
+    		}
+    		if (new_position > 20) {
+      		seesaw.setEncoderPosition(20);
+   		}
+    		else if (new_position < 0) {
+      	seesaw.setEncoderPosition(0);
+    		}
+	}
+
 }
 
-void TSButtonState(bool buttonPressed, bool &push, unsigned long &lastButtonPress) {  
-  unsigned long currentMillis = millis();
-  if (buttonPressed && (currentMillis - lastButtonPress > debounceTime)) {
-    push = !push;
-    lastButtonPress = currentMillis;
-  }
-}
+*/
 
+/*
+void encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encoder_position) {
+	int32_t new_position = seesaw.getEncoderPosition();
+	float gain = 0;
+  	// did we move around?
+  	if (encoder_position != new_position) {
+    		if ((new_position < 21) && (new_position > -1)) {
+    			float position_math = new_position;
+    			gain = (position_math/20)*3.16;	// 3.16 scales the gain to a maximum of 10dB	
+				amp.gain(gain);
+				
+			Serial.print(gain);
+			Serial.print(", ");
+    		}
+    		if (new_position > 20) {
+      		seesaw.setEncoderPosition(20);
+			}
+    		else if (new_position < 0) {
+      	seesaw.setEncoderPosition(0);
+    		}
+	}
+
+
+}
+*/
+/*
+void encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encoder_position) {
+	int32_t new_position = seesaw.getEncoderPosition();
+	float gain = 0;
+  	// did we move around?
+  	if (encoder_position != new_position) {
+    		if ((new_position < 21) && (new_position > -1)) {
+    			float position_math = new_position;
+    			gain = (position_math/20)*3.16;	// 3.16 scales the gain to a maximum of 10dB	
+				amp.gain(gain);
+				
+			Serial.print(gain);
+			Serial.print(", ");
+			encoder_position = new_position;      // and save for next round
+    		}
+    		if (new_position > 20) {
+      		seesaw.setEncoderPosition(20);
+			}
+    		else if (new_position < 0) {
+      	seesaw.setEncoderPosition(0);
+    		}
+	}
+
+
+}
+*/
+
+void encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encoder_position) {
+	int32_t new_position = seesaw.getEncoderPosition();
+	float gain = 0;
+  	// did we move around?
+  	if (encoder_position != new_position) {
+    		if ((new_position < 21) && (new_position > -1)) {
+    			float position_math = new_position;
+    			gain = (position_math/20)*3.16;	// 3.16 scales the gain to a maximum of 10dB	
+				amp.gain(gain);
+				encoder_position = new_position;      // and save for next round
+				Serial.print(gain);
+				Serial.print(", ");
+    		}
+	}
+    		if (new_position > 20) {
+      		seesaw.setEncoderPosition(20);
+			}
+    		else if (new_position <= 0) {
+			seesaw.setEncoderPosition(0);
+			amp.gain(0);
+    		}		
+
+
+}
