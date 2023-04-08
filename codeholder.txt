@@ -3,17 +3,17 @@ bool c2 = 0;
 bool c3 = 0;
 bool c4 = 0;
 
-void mixerGain(bool mixer[4]){
+void mixerGain(bool primaryMuteStatus[4]){
     int numOn = 0;
 
     for(size_t i = 0; i < 4; i++){
-        if(mixer[i] == 0)
+        if(primaryMuteStatus[i] == 0)
         numOn++;
     }
 
     if(numOn != 0){
         for(size_t i = 0; i < 4; i++){
-        if(mixer[i] == 0)
+        if(primaryMuteStatus[i] == 0)
             ///Gain Value Change here: = 1 / numOn;
         else
             ///Gain Val Change here = 0;
