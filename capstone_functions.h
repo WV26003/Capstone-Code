@@ -40,6 +40,9 @@ void mute_control(AudioMixer4 &mixer, int channel_num, bool &state);
 void output_mute(AudioAmplifier &amp);
 void output_unmute(AudioAmplifier &amp);
 void output_mix_mute_control(AudioAmplifier &amp, bool &state);
+
+void muting_status_array(seesaw_NeoPixel encoder_pixels[], bool muting_status[]);
+void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, seesaw_NeoPixel encoder_pixels[], bool muting_status[]);
 //Enocoder Functions
 void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &LEDState, uint32_t &lastDebounceTime, bool &lastButtonState);
 void toggleNeoPixel(seesaw_NeoPixel &neopixel);

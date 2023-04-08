@@ -130,6 +130,7 @@ void toggleNeoPixel(seesaw_NeoPixel &neopixel) {
     neopixel.show();
 }
 
+
 void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &LEDState, uint32_t &lastDebounceTime, bool &lastButtonState) {
     bool encoderButtonPressed = readEncoderButton(seesaw, SS_SWITCH);
     bool stateChanged = debounceButton(encoderButtonPressed, LEDState, lastDebounceTime, lastButtonState);
@@ -139,6 +140,155 @@ void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_S
     }
 }
 
+/*
+enum Field{
+	set1 = 1,
+	set2 = 2,
+	set3 = 4,
+	set4 = 8
+};
+
+#define SET1 1
+#define SET2 2
+
+byte b = SET1 | SET2;
+
+if(b & SET1) do something
+*/
+
+//setting mute status array
+void muting_status_array(seesaw_NeoPixel encoder_pixels[], bool muting_status[]){
+													//If the pixel is on, the associated channel should be muted
+	if (encoder_pixels[0].getPixelColor(0) > 0) {
+		muting_status[0] = true;
+	}
+	else {
+		muting_status[0] = false;
+	}
+
+	if (encoder_pixels[1].getPixelColor(0) > 0) {
+		muting_status[1] = true;
+	}
+	else {
+		muting_status[1] = false;
+	}
+
+	if (encoder_pixels[2].getPixelColor(0) > 0) {
+		muting_status[2] = true;
+	}
+	else {
+		muting_status[2] = false;
+	}
+
+	if (encoder_pixels[3].getPixelColor(0) > 0) {
+		muting_status[3] = true;
+	}
+	else {
+		muting_status[3] = false;
+	}
+	//Serial.print(muting_status[0]);
+	//Serial.print(muting_status[1]);
+	//Serial.print(muting_status[2]);
+	//Serial.println(muting_status[3]);
+}
+
+
+/*
+//Input mute Control and mixer gain adjustment
+void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, seesaw_NeoPixel encoder_pixels[], bool muting_status[]){
+	int numOn = 0;							//Counts the number of input channels on
+	for(size_t i = 0; i < 4; i++){
+        if(muting_status[i] == false){
+			numOn++;
+		}
+    }
+	Serial.print(numOn);
+	Serial.print(", ");
+	
+	
+	
+	if(numOn != 0){							//Muting and scaling the gain of the appropriate input channels
+        float numerator = 1;
+		float gainVal = numerator/numOn;
+		Serial.println(gainVal);
+		
+		for(size_t i = 0; i < 4; i++){
+			if(muting_status[i] == false){
+				
+            
+			mixer1.gain(i, gainVal);
+			mixer2.gain(i, gainVal);
+			}
+			else {
+            mixer1.gain(i, 0);
+			mixer2.gain(i, 0);
+			}
+        }
+    }
+	else {									//If no input channels are on (they are all muted) then mute all mixer channels
+            mixer1.gain(0, 0);
+			mixer1.gain(1, 0);
+			mixer1.gain(2, 0);
+			mixer1.gain(3, 0);
+			
+			mixer2.gain(0, 0);
+			mixer2.gain(1, 0);
+			mixer2.gain(2, 0);
+			mixer2.gain(3, 0);
+			
+			Serial.println("0");
+        }
+
+}
+*/
+
+
+//Input mute Control and mixer gain adjustment
+void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, seesaw_NeoPixel encoder_pixels[], bool muting_status[]){
+	int numOn = 0;							//Counts the number of input channels on
+	for(size_t i = 0; i < 4; i++){
+        if(muting_status[i] == false){
+			numOn++;
+		}
+    }
+	Serial.print(numOn);
+	Serial.print(", ");
+	
+	
+	
+	if(numOn != 0){							//Muting and scaling the gain of the appropriate input channels
+        //float numerator = 1;
+		//float gainVal = numerator/numOn;
+		//Serial.println(gainVal);
+		
+		for(size_t i = 0; i < 4; i++){
+			if(muting_status[i] == false){
+				
+            
+			mixer1.gain(i, 0.25);
+			mixer2.gain(i, 0.25);
+			}
+			else {
+            mixer1.gain(i, 0);
+			mixer2.gain(i, 0);
+			}
+        }
+    }
+	else {									//If no input channels are on (they are all muted) then mute all mixer channels
+            mixer1.gain(0, 0);
+			mixer1.gain(1, 0);
+			mixer1.gain(2, 0);
+			mixer1.gain(3, 0);
+			
+			mixer2.gain(0, 0);
+			mixer2.gain(1, 0);
+			mixer2.gain(2, 0);
+			mixer2.gain(3, 0);
+			
+			Serial.println("0");
+        }
+
+}
 
 /*
 void encoder_preamp(Adafruit_seesaw &seesaw, AudioControlSGTL5000 sgtl5000, int32_t &encoder_position) {
@@ -239,12 +389,12 @@ void encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encode
 	int32_t new_position = seesaw.getEncoderPosition();
   	// did we move around?
 
-	Serial.print("NP: ");													//For Testing Purposes
-	Serial.print(new_position);
-	Serial.print(", ");
-	Serial.print("EP: ");													//For Testing Purposes
-	Serial.print(encoder_position);
-	Serial.println(", ");
+	//Serial.print("NP: ");													//For Testing Purposes
+	//Serial.print(new_position);
+	//Serial.print(", ");
+	//Serial.print("EP: ");													//For Testing Purposes
+	//Serial.print(encoder_position);
+	//Serial.println(", ");
 	
 	if (new_position == 0) {
 		amp.gain(0);
