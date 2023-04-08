@@ -63,7 +63,7 @@ bool debounceButton(bool buttonPressed, bool &LEDState, uint32_t &lastDebounceTi
 void toggleNeoPixel(seesaw_NeoPixel &neopixel) {
     uint32_t currentColor = neopixel.getPixelColor(0);
     if (currentColor == neopixel.Color(0, 0, 0)) {
-        neopixel.setPixelColor(0, neopixel.Color(0, 255, 0));
+        neopixel.setPixelColor(0, neopixel.Color(255, 0, 0));
     } else {
         neopixel.setPixelColor(0, neopixel.Color(0, 0, 0));
     }

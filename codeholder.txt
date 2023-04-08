@@ -1,0 +1,28 @@
+bool c1 = 0;
+bool c2 = 0;
+bool c3 = 0;
+bool c4 = 0;
+
+int numOn = 0;
+int gainVal = 0;
+
+bool mixer1[4] = {c1, c2, c3, c4};
+
+
+switch(numOn){
+    case 0:
+        gainVal = 0;
+        break;
+    case 1:
+        gainVal = 1;
+        break:
+    case 2:
+        gainVal = 0.5;
+        break;
+    case 3:
+        gainVal = 0.33;
+        break;
+    case 4:
+        gainVal = 0.25;
+        break;
+}
