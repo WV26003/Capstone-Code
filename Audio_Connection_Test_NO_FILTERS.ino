@@ -8,10 +8,22 @@
 
 // create 4 encoders
 Adafruit_seesaw encoders[4];
+// create 4 encoder pixels
+seesaw_NeoPixel encoder_pixels[4] = {
+  seesaw_NeoPixel(1, ENCODER_NEOPIX, NEO_GRB + NEO_KHZ800),
+  seesaw_NeoPixel(1, ENCODER_NEOPIX, NEO_GRB + NEO_KHZ800),
+  seesaw_NeoPixel(1, ENCODER_NEOPIX, NEO_GRB + NEO_KHZ800),
+  seesaw_NeoPixel(1, ENCODER_NEOPIX, NEO_GRB + NEO_KHZ800)};
+
 
 //Stores encoder position
 int32_t encoder_positions[] = {0, 0, 0, 0};
 bool found_encoders[]       = {false, false, false, false};
+
+uint32_t lastDebounceTime[4];
+bool last[4] = {false, false, false, false};
+bool cur[4] = {false, false, false, false};
+bool led[4] = {false, false, false, false};
 
 
 //Setting Addresses for 6 linear faders
@@ -55,20 +67,22 @@ bool QLEDState8 = false;
 
 
 //Audio Signal Flow
-AudioInputI2SQuad        i2s_quad;       //xy=139,685
-AudioAmplifier           amp6;           //xy=334,754
-AudioAmplifier           amp7;           //xy=334,785
-AudioAmplifier           amp8;           //xy=334,815
-AudioAmplifier           amp5;           //xy=335,724
-AudioAmplifier           amp1;           //xy=336,571
-AudioAmplifier           amp2;           //xy=336,601
-AudioAmplifier           amp3;           //xy=336,631
-AudioAmplifier           amp4;           //xy=336,661
-AudioMixer4              mixer1;         //xy=518,615
-AudioMixer4              mixer2;         //xy=518,684
-AudioAmplifier           amp10;          //xy=652,663
-AudioAmplifier           amp9;           //xy=653,632
-AudioOutputI2SQuad       is_quad;        //xy=829,646
+AudioInputI2SQuad        i2s_quad;       //xy=750,665
+AudioAmplifier           amp6;           //xy=945,734
+AudioAmplifier           amp7;           //xy=945,765
+AudioAmplifier           amp8;           //xy=945,795
+AudioAmplifier           amp5;           //xy=946,704
+AudioAmplifier           amp1;           //xy=947,551
+AudioAmplifier           amp2;           //xy=947,581
+AudioAmplifier           amp3;           //xy=947,611
+AudioAmplifier           amp4;           //xy=947,641
+AudioMixer4              mixer1;         //xy=1097,594
+AudioMixer4              mixer2;         //xy=1097,663
+AudioAmplifier           amp10;          //xy=1231,642
+AudioAmplifier           amp9;           //xy=1232,611
+AudioAmplifier           amp12;          //xy=1360,642
+AudioAmplifier           amp11;          //xy=1361,611
+AudioOutputI2SQuad       is_quad;        //xy=1497,624
 AudioConnection          patchCord1(i2s_quad, 0, amp1, 0);
 AudioConnection          patchCord2(i2s_quad, 0, amp5, 0);
 AudioConnection          patchCord3(i2s_quad, 1, amp2, 0);
@@ -87,12 +101,14 @@ AudioConnection          patchCord15(amp3, 0, mixer1, 2);
 AudioConnection          patchCord16(amp4, 0, mixer1, 3);
 AudioConnection          patchCord17(mixer1, amp9);
 AudioConnection          patchCord18(mixer2, amp10);
-AudioConnection          patchCord19(amp10, 0, is_quad, 2);
-AudioConnection          patchCord20(amp10, 0, is_quad, 3);
-AudioConnection          patchCord21(amp9, 0, is_quad, 0);
-AudioConnection          patchCord22(amp9, 0, is_quad, 1);
-AudioControlSGTL5000     sgtl5000_1;     //xy=356.5,338
-AudioControlSGTL5000     sgtl5000_2;     //xy=511.5,339
+AudioConnection          patchCord19(amp10, amp12);
+AudioConnection          patchCord20(amp9, amp11);
+AudioConnection          patchCord21(amp12, 0, is_quad, 2);
+AudioConnection          patchCord22(amp12, 0, is_quad, 3);
+AudioConnection          patchCord23(amp11, 0, is_quad, 0);
+AudioConnection          patchCord24(amp11, 0, is_quad, 1);
+AudioControlSGTL5000     sgtl5000_1;     //xy=967,318
+AudioControlSGTL5000     sgtl5000_2;     //xy=1122,319
 
 
 
@@ -122,28 +138,26 @@ Serial.begin(115200);
 
   for (uint8_t enc=0; enc<sizeof(found_encoders); enc++) {
     // See if we can find encoders on this address
-    if (! encoders[enc].begin(ENCODER_BASE_ADDR + enc)) {
+    if (! encoders[enc].begin(ENCODER_BASE_ADDR + enc) ||
+        ! encoder_pixels[enc].begin(ENCODER_BASE_ADDR + enc)) {
       Serial.print("Couldn't find encoder #");
       Serial.println(enc);
-    } 
-    else {
-      Serial.print("Found encoder");
+    } else {
+      Serial.print("Found encoder + pixel #");
       Serial.println(enc);
 
-      uint32_t version = ((encoders[enc].getVersion() >> 16) & 0xFFFF);
-      if (version != 4991){
-        Serial.print("Wrong firmware loaded? ");
-        Serial.println(version);
-        while(1) delay(10);
-      }
+  // use a pin for the built in encoder switch
+  encoders[enc].pinMode(ENCODER_SWITCH, INPUT_PULLUP);
 
-      // use a pin for the built in encoder switch
-      encoders[enc].pinMode(ENCODER_SWITCH, INPUT_PULLUP);
 
-      // get starting position
-      encoder_positions[enc] = encoders[enc].getEncoderPosition();
+  // set not so bright!
+  encoder_pixels[enc].setBrightness(30);
+  encoder_pixels[enc].show();
+
+  found_encoders[enc] = true;
     }
   }
+  Serial.println("Encoders started");
 
 //Engaging Linear Faders
   if (!L_Fader_1.begin(Linear_Fader_ADDR_1)){
@@ -288,14 +302,51 @@ void loop() {
 
 //Muting Output Mixes Via Qwicc Buttons
 
-  output_mix_mute_control(mixer1, 0, QLEDState7);
-  output_mix_mute_control(mixer1, 1, QLEDState7);
-  output_mix_mute_control(mixer1, 2, QLEDState7);
-  output_mix_mute_control(mixer1, 3, QLEDState7);
+  output_mix_mute_control(amp11, QLEDState7);
+  output_mix_mute_control(amp12, QLEDState8);
 
-  output_mix_mute_control(mixer2, 0, QLEDState8);
-  output_mix_mute_control(mixer2, 1, QLEDState8);
-  output_mix_mute_control(mixer2, 2, QLEDState8);
-  output_mix_mute_control(mixer2, 3, QLEDState8);
+//Toggling Encoder Buttons
+  encoder_button(encoders[0], encoder_pixels[0], ENCODER_SWITCH, ENCODER_NEOPIX, led[0], lastDebounceTime[0], last[0]);
+  encoder_button(encoders[1], encoder_pixels[1], ENCODER_SWITCH, ENCODER_NEOPIX, led[1], lastDebounceTime[1], last[1]);
+  encoder_button(encoders[2], encoder_pixels[2], ENCODER_SWITCH, ENCODER_NEOPIX, led[2], lastDebounceTime[2], last[2]);
+  encoder_button(encoders[3], encoder_pixels[3], ENCODER_SWITCH, ENCODER_NEOPIX, led[3], lastDebounceTime[3], last[3]);
+
+//Muting Inputs with Encoder Buttons
+
+  if (encoder_pixels[0].getPixelColor(0) > 0) {
+    mixer1.gain(0, 0);
+    mixer2.gain(0, 0);
+  }
+  else {
+    mixer1.gain(0, 1);
+    mixer2.gain(0, 1);
+  }
+
+  if (encoder_pixels[1].getPixelColor(0) > 0) {
+    mixer1.gain(1, 0);
+    mixer2.gain(1, 0);
+  }
+  else {
+    mixer1.gain(1, 1);
+    mixer2.gain(1, 1);
+  }
+
+  if (encoder_pixels[2].getPixelColor(0) > 0) {
+    mixer1.gain(2, 0);
+    mixer2.gain(2, 0);
+  }
+  else {
+    mixer1.gain(2, 1);
+    mixer2.gain(2, 1);
+  }
+
+  if (encoder_pixels[3].getPixelColor(0) > 0) {
+    mixer1.gain(3, 0);
+    mixer2.gain(3, 0);
+  }
+  else {
+    mixer1.gain(3, 1);
+    mixer2.gain(3, 1);
+  }
 
 }

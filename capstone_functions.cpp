@@ -18,12 +18,41 @@ void button_toggle(QwiicButton &button, bool &ledState){
     }
 }
 
+
 void mute(AudioMixer4 &mixer, int channel_num){
     mixer.gain(channel_num, 0);
 }
 
 void unmute(AudioMixer4 &mixer, int channel_num){
     mixer.gain(channel_num, 1);
+}
+
+void mute_control(AudioMixer4 &mixer, int channel_num, bool &state){
+  	if (state == true) {
+     		mute(mixer, channel_num);
+  	}
+  	else {
+    		unmute(mixer, channel_num);
+  	}
+}
+
+//Controlling an amp object to toggle output muting
+void output_mute(AudioAmplifier &amp){
+    amp.gain(0);
+}
+
+void output_unmute(AudioAmplifier &amp){
+    amp.gain(1);
+}
+
+//Controlling an amp object to toggle output muting
+void output_mix_mute_control(AudioAmplifier &amp, bool &state){
+  	if (state == true) {
+     		output_mute(amp);
+  	}
+  	else {
+    		output_unmute(amp);
+  	}
 }
 
 /*
@@ -69,14 +98,6 @@ void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
 }
 
 
-void output_mix_mute_control(AudioMixer4 &mixer, int channel_num, bool &state){
-  	if (state == true) {
-     		mute(mixer, channel_num);
-  	}
-  	else {
-    		unmute(mixer, channel_num);
-  	}
-}
 
 bool readEncoderButton(Adafruit_seesaw &seesaw, int SS_SWITCH) {
     return !seesaw.digitalRead(SS_SWITCH);
@@ -102,7 +123,7 @@ bool debounceButton(bool buttonPressed, bool &LEDState, uint32_t &lastDebounceTi
 void toggleNeoPixel(seesaw_NeoPixel &neopixel) {
     uint32_t currentColor = neopixel.getPixelColor(0);
     if (currentColor == neopixel.Color(0, 0, 0)) {
-        neopixel.setPixelColor(0, neopixel.Color(0, 255, 0));
+        neopixel.setPixelColor(0, neopixel.Color(255, 0, 0));
     } else {
         neopixel.setPixelColor(0, neopixel.Color(0, 0, 0));
     }
@@ -216,8 +237,19 @@ void encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encode
 
 void encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encoder_position) {
 	int32_t new_position = seesaw.getEncoderPosition();
-	float gain = 0;
   	// did we move around?
+
+	Serial.print("NP: ");													//For Testing Purposes
+	Serial.print(new_position);
+	Serial.print(", ");
+	Serial.print("EP: ");													//For Testing Purposes
+	Serial.print(encoder_position);
+	Serial.println(", ");
+	
+	if (new_position == 0) {
+		amp.gain(0);
+	}
+
   	if (encoder_position != new_position) {
     		if ((new_position < 61) && (new_position > -1)) {
     			float position_math = new_position;
@@ -227,9 +259,9 @@ void encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encode
 				amp.gain(scaled_lower);													//Input the previous value into the gain function to achieve an attentuation up to pass-through
 		
 				float gain_lower = 20*log10(scaled_lower);
-				Serial.print("GL: ");													//For Testing Purposes
-				Serial.print(gain_lower);
-				Serial.println(", ");
+				//Serial.print("GL: ");													//For Testing Purposes
+				//Serial.print(gain_lower);
+				//Serial.println(", ");
 				}
 				else if (position_math > 45){												//Scaling the upper 1/4 of the fader
 				float min_val = 45;						
@@ -241,22 +273,19 @@ void encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encode
 				amp.gain(scaling_buffer);												//Input the previous value into the gain function to achieve pass-through up to 10dB
 	
 				float gain_upper = 20*log10(scaling_buffer);
-				Serial.print("GU: ");													//For Testing Purposes
-				Serial.print(gain_upper);
-				Serial.println(", ");
+				//Serial.print("GU: ");													//For Testing Purposes
+				//Serial.print(gain_upper);
+				//Serial.println(", ");
 				}
-				
-			encoder_position = new_position;      // and save for next round
-			
+	
     		}
+		encoder_position = new_position;
 	}
-    if (new_position > 60) {
+	if (new_position > 60) {
 		seesaw.setEncoderPosition(60);
 	}
-	else if (new_position <= 0) {
+	else if (new_position < 0) {
 		seesaw.setEncoderPosition(0);
-		amp.gain(0);
-    }		
-
+    }
 
 }
