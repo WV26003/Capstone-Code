@@ -23,7 +23,7 @@ const int TS_LEFT = 40;
 const int TS_RT = 980;
 const int TS_TOP = 120;
 const int TS_BOT = 920;
-const unsigned long debounceTime = 200;
+const unsigned long debounceTime = 1000;
 
 
 //Function prototypes
@@ -41,8 +41,15 @@ void toggleNeoPixel(seesaw_NeoPixel &neopixel);
 bool debounceButton(bool buttonPressed, bool &LEDState, uint32_t &lastDebounceTime, bool &lastButtonState);
 bool readEncoderButton(Adafruit_seesaw &seesaw, int SS_SWITCH);
 //Touchscreen
-bool isTSButtonPressed(uint16_t x, uint16_t y);
-void TSButtonState(bool buttonPressed, bool &push, unsigned long &lastButtonPress); 
+void handleButtonPress(bool &push, unsigned long &lastButtonPress, unsigned long &currentMillis, unsigned long debounceTime);
+void drawMenu(bool push, Adafruit_RA8875 tft);
+bool isButtonPressed(int x, int y, int x1, int x2, int y1, int y2);
+void readTouchInput(int &x, int &y, Adafruit_RA8875 tft) ;
+void getMappedCoordinates( int &x, int &y, Adafruit_RA8875 tft);
+void handleMenuPress(bool& push, unsigned long& lastButtonPress, unsigned long currentMillis, int debounceTime, Adafruit_RA8875& tft);
+void printCoordinates(int x, int y) ;
+void printMenu(Adafruit_RA8875 tft);
+void printPEQ(Adafruit_RA8875 tft);
 
 
 
