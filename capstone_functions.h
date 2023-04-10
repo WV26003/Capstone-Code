@@ -30,8 +30,10 @@ const unsigned long debounceTime = 200;
 //Function prototypes
 // Qwiic Button
 void button_toggle(QwiicButton &button, bool &ledState); // Qwiic Button On/OFF toggle
+
 //Linear Fader Control
 void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_read);
+
 //Muting Stuff
 void mute(AudioMixer4 &mixer, int channel_num);
 void unmute(AudioMixer4 &mixer, int channel_num);
@@ -43,6 +45,10 @@ void output_mix_mute_control(AudioAmplifier &amp, bool &state);
 
 void muting_status_array(seesaw_NeoPixel encoder_pixels[], bool muting_status[]);
 void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, seesaw_NeoPixel encoder_pixels[], bool muting_status[]);
+
+//Monitoring Function
+void monitoring(AudioMixer4 &mixer3, AudioMixer4 &mixer4, bool monitoring_status[]);
+
 //Enocoder Functions
 void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &LEDState, uint32_t &lastDebounceTime, bool &lastButtonState);
 void toggleNeoPixel(seesaw_NeoPixel &neopixel);
