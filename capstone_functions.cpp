@@ -119,117 +119,42 @@ void handleMenuPress(channel& ch, peq_buttons &peq, bool& push, unsigned long& l
   }
 }
 
-void handlePeqButtonPress(bool &button, peq_buttons &peq, int buttonIndex, unsigned long &lastButtonPress, unsigned long currentMillis, int debounceTime, Adafruit_RA8875 &tft) {
-  //if (!peq.status) {
-  //  return; // If PEQ is off, don't toggle any buttons
-  //}
-
+void handlePeqButtonPress(channel &ch, int buttonIndex, unsigned long &lastButtonPress, unsigned long currentMillis, int debounceTime, Adafruit_RA8875 &tft) {
+ 
   if (currentMillis - lastButtonPress >= debounceTime) {
     lastButtonPress = currentMillis;
     Serial.print("Button ");
     Serial.print(buttonIndex);
     Serial.println(" Toggle");
-
-    checkPEQButtons(peq, buttonIndex, tft);
+    
+    if(ch.active != 0 )checkPEQButtons(ch.peqs[ch.active - 1], buttonIndex, tft);
+    updateSliders(tft, ch.peqs[ch.active - 1]);
   }
 }
 void checkPEQButtons(peq_buttons &peq, int currentButtonIndex, Adafruit_RA8875 &tft) {
-  // Update button states
   if (currentButtonIndex == 9){
     peq.status = !peq.status;
-  }
-  if (currentButtonIndex >= 1 && currentButtonIndex <= 8) {
-    Serial.println("In loop");
-    if (currentButtonIndex == 1) {
-      peq.bs1 = 1;
-      peq.ls = true;
-      peq.b1 = false;
-      peq.hp = false;
-      peq.b2 = false;
-      peq.b3 = false;
-      peq.hs = false;
-      peq.b4 = false;
-      peq.lp = false;
-      }
-    if (currentButtonIndex == 2)  {
-      peq.bs1 = 2;
-      peq.ls = false;
-      peq.b1 = true;
-      peq.hp = false;
-      peq.b2 = false;
-      peq.b3 = false;
-      peq.hs = false;
-      peq.b4 = false;
-      peq.lp = false;
-      }
-    if (currentButtonIndex == 3){
-      peq.bs1 = 3;
-      peq.ls = false;
-      peq.b1 = false;
-      peq.hp = true;
-      peq.b2 = false;
-      peq.b3 = false;
-      peq.hs = false;
-      peq.b4 = false;
-      peq.lp = false;
-      }
-    if (currentButtonIndex == 4)  {
-      peq.ls = false;
-      peq.b1 = false;
-      peq.hp = false;
-      peq.b2 = true;
-      peq.b3 = false;
-      peq.hs = false;
-      peq.b4 = false;
-      peq.lp = false;
-      }
-    if (currentButtonIndex == 5)  {
-      peq.ls = false;
-      peq.b1 = false;
-      peq.hp = false;
-      peq.b2 = false;
-      peq.b3 = true;
-      peq.hs = false;
-      peq.b4 = false;
-      peq.lp = false;
-    }
-    if (currentButtonIndex == 6)  {
-      peq.bs2 = 1;
-      peq.ls = false;
-      peq.b1 = false;
-      peq.hp = false;
-      peq.b2 = false;
-      peq.b3 = false;
-      peq.hs = true;
-      peq.b4 = false;
-      peq.lp = false;
-    }
-    if (currentButtonIndex == 7)  {
-      peq.bs2 = 2;
-      peq.ls = false;
-      peq.b1 = false;
-      peq.hp = false;
-      peq.b2 = false;
-      peq.b3 = false;
-      peq.hs = false;
-      peq.b4 = true;
-      peq.lp = false;
-      }
-    if (currentButtonIndex == 8)  {
-      peq.bs2 = 3;
-      peq.ls = false;
-      peq.b1 = false;
-      peq.hp = false;
-      peq.b2 = false;
-      peq.b3 = false;
-      peq.hs = false;
-      peq.b4 = false;
-      peq.lp = true;
-    }
   }
   tft.fillRect(122, 210, 150, 60, peq.status ? RA8875_YELLOW : RA8875_GREEN);
   drawButtonText(tft, 128, 216, "ON/OFF", RA8875_BLACK, peq.status ? RA8875_YELLOW : RA8875_GREEN, 2);
 
+  if ((currentButtonIndex >= 1 && currentButtonIndex <= 8  && peq.status == true) || currentButtonIndex == 10) {
+    peq.ls = (currentButtonIndex == 1);
+    peq.b1 = (currentButtonIndex == 2);
+    peq.hp = (currentButtonIndex == 3);
+    peq.b2 = (currentButtonIndex == 4);
+    peq.b3 = (currentButtonIndex == 5);
+    peq.hs = (currentButtonIndex == 6);
+    peq.b4 = (currentButtonIndex == 7);
+    peq.lp = (currentButtonIndex == 8);
+    if (currentButtonIndex == 10) peq.hpf = !peq.hpf;
+    if (currentButtonIndex == 1) peq.bs1 = 1;
+    if (currentButtonIndex == 2) peq.bs1 = 2;
+    if (currentButtonIndex == 3) peq.bs1 = 3;
+    if (currentButtonIndex == 6) peq.bs2 = 1;
+    if (currentButtonIndex == 7) peq.bs2 = 2;
+    if (currentButtonIndex == 8) peq.bs2 = 3;
+  }
 
   // Redraw buttons with new background colors
   tft.fillRect(280, 278, 86, 60, peq.ls ? RA8875_YELLOW : RA8875_GREEN);
@@ -280,8 +205,10 @@ void checkPEQButtons(peq_buttons &peq, int currentButtonIndex, Adafruit_RA8875 &
     drawButtonText(tft, 572, 428, "L.P", RA8875_BLACK, RA8875_BLUE, 1);
   }
 
+  tft.fillRect(646, 6, 136, 60, peq.hpf ? RA8875_BLUE : RA8875_CYAN);
+  drawButtonText(tft, 648, 18, "HighPass", RA8875_BLACK, peq.hpf ? RA8875_BLUE : RA8875_CYAN, 1);
 
-    Serial.println("Current PEQ state:");
+  Serial.println("Current PEQ state:");
   Serial.print("LS: "); Serial.println(peq.ls ? "ON" : "OFF");
   Serial.print("B1: "); Serial.println(peq.b1 ? "ON" : "OFF");
   Serial.print("HP: "); Serial.println(peq.hp ? "ON" : "OFF");
@@ -304,6 +231,7 @@ void handleChannelPress(bool& button, channel& ch, int buttonIndex, unsigned lon
 
     if (previousButtonState != button) { // Only reset other buttons if the current button state has changed
       resetOtherChannels(ch, buttonIndex, tft);
+      updateSliders(tft, ch.peqs[ch.active -1]);
     }
   }
 }
@@ -312,61 +240,34 @@ void handleChannelPress(bool& button, channel& ch, int buttonIndex, unsigned lon
 
 void resetOtherChannels(channel& ch, int currentButtonIndex, Adafruit_RA8875 &tft) {
   if (currentButtonIndex >= 1 && currentButtonIndex <= 6) {
-    if (currentButtonIndex != 1) {
-      ch.input1 = false;
-      tft.fillRect(4, 74, 110, 60, RA8875_GREEN);
-    } else {
-      tft.fillRect(4, 74, 110, 60, RA8875_YELLOW);
-    }
-    drawButtonText(tft, 10, 80, "IN 1", RA8875_BLACK, currentButtonIndex == 1 ? RA8875_YELLOW : RA8875_GREEN, 2);
+    ch.input1 = (currentButtonIndex == 1);
+    ch.input2 = (currentButtonIndex == 2);
+    ch.input3 = (currentButtonIndex == 3);
+    ch.input4 = (currentButtonIndex == 4);
+    ch.pri = (currentButtonIndex == 5);
+    ch.aux = (currentButtonIndex == 6);
+    ch.active = currentButtonIndex;
+    tft.fillRect(4, 74, 110, 60, ch.input1 ? RA8875_YELLOW : RA8875_GREEN);
+    drawButtonText(tft, 10, 80, "IN 1", RA8875_BLACK, ch.input1 ? RA8875_YELLOW : RA8875_GREEN, 2);
+    tft.fillRect(4, 142, 110, 60, ch.input2 ? RA8875_YELLOW : RA8875_GREEN);
+    drawButtonText(tft, 10, 148, "IN 2", RA8875_BLACK, ch.input2 ? RA8875_YELLOW : RA8875_GREEN, 2);
+    tft.fillRect(4, 210, 110, 60, ch.input3 ? RA8875_YELLOW : RA8875_GREEN);
+    drawButtonText(tft, 10, 216, "IN 3", RA8875_BLACK, ch.input3 ? RA8875_YELLOW : RA8875_GREEN, 2);
+    tft.fillRect(4, 278, 110, 60, ch.input4 ? RA8875_YELLOW : RA8875_GREEN);
+    drawButtonText(tft, 10, 284, "IN 4", RA8875_BLACK, ch.input4 ? RA8875_YELLOW : RA8875_GREEN, 2);
+    tft.fillRect(4, 346, 110, 60, ch.pri ? RA8875_YELLOW : RA8875_GREEN);
+    drawButtonText(tft, 22, 352, "PRI", RA8875_BLACK, ch.pri ? RA8875_YELLOW : RA8875_GREEN, 2);
+    tft.fillRect(4, 414, 110, 60, ch.aux ? RA8875_YELLOW : RA8875_GREEN);
+    drawButtonText(tft, 22, 420, "AUX", RA8875_BLACK, ch.aux ? RA8875_YELLOW : RA8875_GREEN, 2);
 
-    if (currentButtonIndex != 2) {
-      ch.input2 = false;
-      tft.fillRect(4, 142, 110, 60, RA8875_GREEN);
-    } else {
-      tft.fillRect(4, 142, 110, 60, RA8875_YELLOW);
-    }
-    drawButtonText(tft, 10, 148, "IN 2", RA8875_BLACK, currentButtonIndex == 2 ? RA8875_YELLOW : RA8875_GREEN, 2);
-
-    if (currentButtonIndex != 3) {
-      ch.input3 = false;
-      tft.fillRect(4, 210, 110, 60, RA8875_GREEN);
-    } else {
-      tft.fillRect(4, 210, 110, 60, RA8875_YELLOW);
-    }
-    drawButtonText(tft, 10, 216, "IN 3", RA8875_BLACK, currentButtonIndex == 3 ? RA8875_YELLOW : RA8875_GREEN, 2);
-
-    if (currentButtonIndex != 4) {
-      ch.input4 = false;
-      tft.fillRect(4, 278, 110, 60, RA8875_GREEN);
-    } else {
-      tft.fillRect(4, 278, 110, 60, RA8875_YELLOW);
-    }
-    drawButtonText(tft, 10, 284, "IN 4", RA8875_BLACK, currentButtonIndex == 4 ? RA8875_YELLOW : RA8875_GREEN, 2);
-
-    if (currentButtonIndex != 5) {
-      ch.aux = false;
-      tft.fillRect(4, 346, 110, 60, RA8875_GREEN);
-    } else {
-      tft.fillRect(4, 346, 110, 60, RA8875_YELLOW);
-    }
-    drawButtonText(tft, 22, 352, "PRI", RA8875_BLACK, currentButtonIndex == 5 ? RA8875_YELLOW : RA8875_GREEN, 2);
-
-    if (currentButtonIndex != 6) {
-      ch.pri = false;
-      tft.fillRect(4, 414, 110, 60, RA8875_GREEN);
-    } else {
-      tft.fillRect(4, 414, 110, 60, RA8875_YELLOW);
-    }
-    drawButtonText(tft, 22, 420, "AUX", RA8875_BLACK, currentButtonIndex == 6 ? RA8875_YELLOW : RA8875_GREEN, 2);
-
-  Serial.println("Current channel state:");
-  Serial.print("Input1: "); Serial.println(ch.input1 ? "ON" : "OFF");
-  Serial.print("Input2: "); Serial.println(ch.input2 ? "ON" : "OFF");
-  Serial.print("Input3: "); Serial.println(ch.input3 ? "ON" : "OFF");
-  Serial.print("Input4: "); Serial.println(ch.input4 ? "ON" : "OFF");
-  Serial.print("PRI: "); Serial.println(ch.pri ? "ON" : "OFF");
-  Serial.print("AUX: "); Serial.println(ch.aux ? "ON" : "OFF");
+    Serial.println("Current channel state:");
+    Serial.print("Input1: "); Serial.println(ch.input1 ? "ON" : "OFF");
+    Serial.print("Input2: "); Serial.println(ch.input2 ? "ON" : "OFF");
+    Serial.print("Input3: "); Serial.println(ch.input3 ? "ON" : "OFF");
+    Serial.print("Input4: "); Serial.println(ch.input4 ? "ON" : "OFF");
+    Serial.print("PRI: "); Serial.println(ch.pri ? "ON" : "OFF");
+    Serial.print("AUX: "); Serial.println(ch.aux ? "ON" : "OFF");
+    checkPEQButtons(ch.peqs[ch.active - 1], -1, tft);
   }
 }
 
@@ -396,6 +297,8 @@ void printPEQ(Adafruit_RA8875 &tft, peq_buttons &peq, channel& ch) {
   // Print all text
   printAllText(tft, peq, ch);
 
+  updateSliders(tft, ch.peqs[ch.active - 1]);
+
   // Put back into graphics mode
   tft.graphicsMode();
 }
@@ -408,10 +311,11 @@ void drawAllBoxes(Adafruit_RA8875 &tft, peq_buttons &peq, channel& ch) {
   drawCutoffBandwidthGainBoxes(tft, peq);
 
   // Draw High-Pass Filter boxes
-  drawHighPassFilterBoxes(tft);
+  drawHighPassFilterBoxes(tft, peq);
 
   // Draw Band Selectors
   drawBandSelectors(tft, peq);
+ 
 }
 
 void drawLeftButtons(Adafruit_RA8875 &tft, channel& ch) {
@@ -433,10 +337,10 @@ void drawCutoffBandwidthGainBoxes(Adafruit_RA8875 &tft, peq_buttons &peq) {
   tft.fillRect(122, 210, 150, 60, peq.status ? RA8875_YELLOW : RA8875_GREEN); // on/off
 }
 
-void drawHighPassFilterBoxes(Adafruit_RA8875 &tft) {
+void drawHighPassFilterBoxes(Adafruit_RA8875 &tft, peq_buttons &peq) {
   tft.fillRect(638, 0, 162, 140, RA8875_BLACK);
-  tft.fillRect(646, 6, 150, 60, RA8875_CYAN); // high pass
-  tft.fillRect(646, 74, 150, 60, RA8875_CYAN); // cut
+  tft.fillRect(646, 6, 134, 60, peq.hpf ? RA8875_BLUE : RA8875_CYAN);; // high pass
+  tft.fillRect(646, 74, 134, 60, RA8875_CYAN); // cut
 }
 
 void drawBandSelectors(Adafruit_RA8875 &tft, peq_buttons &peq) {
@@ -461,7 +365,7 @@ void printAllText(Adafruit_RA8875 &tft, peq_buttons &peq, channel& ch) {
   printCutoffBandwidthGainText(tft, peq);
 
   // Print High-Pass Filter text
-  printHighPassFilterText(tft);
+  printHighPassFilterText(tft, peq);
 
   // Print Band Selector text
   printBandSelectorText(tft, peq);
@@ -494,11 +398,11 @@ void printCutoffBandwidthGainText(Adafruit_RA8875 &tft, peq_buttons &peq) {
   tft.graphicsMode();
 }
 
-void printHighPassFilterText(Adafruit_RA8875 &tft) {
+void printHighPassFilterText(Adafruit_RA8875 &tft, peq_buttons &peq) {
+  drawButtonText(tft, 648, 18, "HighPass", RA8875_BLACK, peq.hpf ? RA8875_BLUE : RA8875_CYAN, 1);
   tft.textMode();
   tft.textEnlarge(1);
-  tft.textSetCursor(648, 18);
-  tft.textWrite("High-Pass");
+  tft.textColor(RA8875_BLACK, RA8875_CYAN);
   tft.textSetCursor(668, 86);
   tft.textWrite("Cut: ");
   tft.graphicsMode();
@@ -537,15 +441,62 @@ void printBandSelectorText(Adafruit_RA8875 &tft, peq_buttons &peq) {
   }
 }
 
+void updateSliders(Adafruit_RA8875 &tft, peq_buttons &peq){
+  if(peq.hpf){
+    drawHPFSlider(tft,peq.hpfSlider.currentSliderPos, peq.hpfSlider);
+  }else{
+      tft.fillRect(700, 160, 40, 300, RA8875_WHITE);
+  }
+}
+void handleHPFSlider(Adafruit_RA8875 &tft, int y, Slider &slide, peq_buttons &peq) {
+  slide.lastSliderPos = -1;
+  slide.currentSliderPos = -1;
+
+  slide.currentSliderPos = constrain(y, slide.y_begin, slide.y_end);
+  slide.slider_value  = (float)(slide.y_end - slide.currentSliderPos) / (slide.y_end - slide.y_begin) * 100;
+  Serial.println(slide.slider_value);
+
+  if (slide.currentSliderPos != -1 && slide.currentSliderPos != slide.lastSliderPos && peq.hpf) {
+    drawHPFSlider(tft, slide.currentSliderPos, slide);
+    slide.lastSliderPos = slide.currentSliderPos;
+  }else{
+      tft.fillRect(slide.x_begin-20, slide.y_end+10, 41, slide.y_begin - slide.y_end-20, RA8875_WHITE);
+  }
+}
+
+void drawHPFSlider(Adafruit_RA8875 &tft, int circleY , Slider &slide) {
+  tft.fillRect(slide.x_begin-20, slide.y_end+10, 41, slide.y_begin - slide.y_end-20, RA8875_WHITE);  // Update the rectangle to start at the end Y position and go to the start Y position
+  tft.drawLine(slide.x_begin, slide.y_begin, slide.x_begin, slide.y_end, RA8875_BLACK);
+  if(circleY == -1){
+    tft.fillCircle(slide.x_begin, slide.y_end, 10, RA8875_BLUE);
+  }else{
+
+    tft.fillCircle(slide.x_begin, circleY, 10, RA8875_BLUE);
+  }
+}
+
+
+void initializeChannel(channel &ch) {
+
+    for (int i = 0; i < 6; ++i) {
+        ch.peqs[i].hpfSlider.x_begin = 720;
+        ch.peqs[i].hpfSlider.x_end = 720;
+        ch.peqs[i].hpfSlider.y_begin = 160;
+        ch.peqs[i].hpfSlider.y_end = 460;
+        ch.peqs[i].hpfSlider.currentSliderPos = -1;
+        ch.peqs[i].hpfSlider.lastSliderPos = -1;
+        ch.peqs[i].hpfSlider.slider_value = 0;
+    }
+}
+
+
+
 void printInputSelectionText(Adafruit_RA8875 &tft) {
   tft.textMode();
   tft.textColor(RA8875_BLACK, RA8875_CYAN);
-  tft.textSetCursor(380, 428);
-  tft.textWrite("INPUT: ");
-  tft.textSetCursor(380, 287);
-  tft.textWrite("C.Band: ");
+  tft.textSetCursor(390, 287);
+  tft.textWrite("PEQ BANDS");
   tft.graphicsMode();
-
 }
 void printMenu(Adafruit_RA8875 tft){
   

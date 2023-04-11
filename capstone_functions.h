@@ -25,6 +25,17 @@ const int TS_TOP = 120;
 const int TS_BOT = 920;
 const unsigned long debounceTime = 1000;
 
+struct Slider{
+  int x_begin;
+  int x_end;
+  int y_begin;
+  int y_end;
+  int currentSliderPos;
+  int lastSliderPos;
+  float slider_value;
+  
+};
+
 
 struct peq_buttons{
     int bs1 = 2;
@@ -37,17 +48,20 @@ struct peq_buttons{
     bool b2 = false;
     bool b3 = false;
     bool b4 = false;
+    bool hpf = false;
     bool status = false;
+    Slider hpfSlider;
 };
 
 struct channel{
+    int active = 0;
     bool input1 = 0;
     bool input2 = 0;
     bool input3 = 0;
     bool input4 = 0;
     bool pri = 0;
     bool aux = 0;
-
+    peq_buttons peqs[6];
 };
 
 struct tsbutton{
@@ -81,7 +95,7 @@ bool isButtonPressed(int x, int y, tsbutton &button);
 void readTouchInput(int &x, int &y, Adafruit_RA8875 tft);
 void getMappedCoordinates( int &x, int &y, Adafruit_RA8875 tft);
 void handleMenuPress(channel& ch, peq_buttons &peq, bool& push, unsigned long& lastButtonPress, unsigned long currentMillis, int debounceTime, Adafruit_RA8875& tft);
-void handlePeqButtonPress(bool &button, peq_buttons &peq, int buttonIndex, unsigned long &lastButtonPress, unsigned long currentMillis, int debounceTime, Adafruit_RA8875 &tft);
+void handlePeqButtonPress(channel &ch, int buttonIndex, unsigned long &lastButtonPress, unsigned long currentMillis, int debounceTime, Adafruit_RA8875 &tft);
 void checkPEQButtons(peq_buttons& peq, int currentButtonIndex, Adafruit_RA8875 &tft);
 void togglePEQButton(bool &button, int buttonIndex, int currentButtonIndex, Adafruit_RA8875 &tft, int x, int y, const String &label);
 void handleChannelPress(bool& button, channel& ch, int buttonIndex, unsigned long& lastButtonPress, unsigned long currentMillis, int debounceTime, Adafruit_RA8875 &tft) ;
@@ -93,14 +107,19 @@ void printPEQ(Adafruit_RA8875 &tft, peq_buttons &peq, channel& ch);
 void drawAllBoxes(Adafruit_RA8875 &tft, peq_buttons &peq,channel& ch);
 void drawLeftButtons(Adafruit_RA8875 &tft, channel &ch);
 void drawCutoffBandwidthGainBoxes(Adafruit_RA8875 &tft, peq_buttons &peq);
-void drawHighPassFilterBoxes(Adafruit_RA8875 &tft);
+void drawHighPassFilterBoxes(Adafruit_RA8875 &tft, peq_buttons &peq);
 void drawBandSelectors(Adafruit_RA8875 &tft, peq_buttons &peq);
 void printAllText(Adafruit_RA8875 &tft, peq_buttons &peq, channel& ch);
 void printLeftButtonsText(Adafruit_RA8875 &tft, channel& ch);
 void printCutoffBandwidthGainText(Adafruit_RA8875 &tft, peq_buttons &peq);
-void printHighPassFilterText(Adafruit_RA8875 &tft);
+void printHighPassFilterText(Adafruit_RA8875 &tft, peq_buttons &peq);
 void printBandSelectorText(Adafruit_RA8875 &tft, peq_buttons &peq);
 void printInputSelectionText(Adafruit_RA8875 &tft);
+//ts sliders
+void drawHPFSlider(Adafruit_RA8875 &tft, int circleY , Slider &slide);
+void handleHPFSlider(Adafruit_RA8875 &tft, int y, Slider &slide, peq_buttons &peq);
+void updateSliders(Adafruit_RA8875 &tft, peq_buttons &peq);
 
 
+void initializeChannel(channel &ch) ;
 #endif

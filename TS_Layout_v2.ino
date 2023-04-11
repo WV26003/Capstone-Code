@@ -5,16 +5,18 @@
 #define RA8875_RESET   9
 Adafruit_RA8875 tft = Adafruit_RA8875(RA8875_CS, RA8875_RESET);
 bool push = false;
+bool engage = false;
 unsigned long lastButtonPress = 0;
-
-struct sliderBox {
-  int leftBound;
-  int rightBound;
-  int topBound;
-  int botBound;
-};
+Slider hpf_slide{720,720,160,460,-1,-1,0};
 channel ch;
+
 peq_buttons peq;
+peq_buttons peq1;
+peq_buttons peq2;
+peq_buttons peq3;
+peq_buttons peq4;
+peq_buttons peq5;
+peq_buttons peq6;
 
 tsbutton PEQSwitch{ 4, 114, 6, 66,0,1};
 tsbutton Input1{ 4, 114, 74, 134,0,2};
@@ -32,12 +34,14 @@ tsbutton hs{552,638,278,338,0,13};
 tsbutton b4{552,638,346,406,0,14};
 tsbutton lp{552,638,414,474,0,15};
 tsbutton OnOff{ 122, 272, 210, 270,0,16};
+tsbutton HPF{646,800,6,66,0,17};
+tsbutton HPFSLIDE{720,720,160,460,0,18};
 
 
 void setup() {
   Serial.begin(9600);
   Serial.println("Hello, RA8875!");
-
+  initializeChannel(ch);
   if (!tft.begin(RA8875_800x480)) {
     Serial.println("RA8875 not found ... check your wires!");
     while (1);
@@ -63,16 +67,14 @@ void setup() {
 void loop() {
   int x, y;
   unsigned long currentMillis = millis();
-
   readTouchInput(x, y, tft);
   if (tft.touched()) {
     getMappedCoordinates(x, y, tft);
-   printCoordinates(x, y);
-
+   //printCoordinates(x, y);
+    
     if (isButtonPressed(x, y, PEQSwitch)) {
-      handleMenuPress(ch, peq, push, lastButtonPress, currentMillis, debounceTime, tft);
+      handleMenuPress(ch, ch.peqs[ch.active -1], push, lastButtonPress, currentMillis, debounceTime, tft);
     }else if(isButtonPressed(x, y, Input1)&& push == true){
-
         handleChannelPress(ch.input1, ch, 1, lastButtonPress, currentMillis, debounceTime, tft); 
     }else if(isButtonPressed(x, y, Input2)&& push == true){
       handleChannelPress(ch.input2, ch, 2, lastButtonPress, currentMillis, debounceTime, tft);
@@ -85,34 +87,30 @@ void loop() {
     }else if(isButtonPressed(x, y, AUX)&& push == true){
       handleChannelPress(ch.aux, ch, 6, lastButtonPress, currentMillis, debounceTime, tft);
     }else if(isButtonPressed(x, y, ls)&& push == true){
-      Serial.println("GOT HERE");
-      handlePeqButtonPress(peq.ls, peq, 1, lastButtonPress, currentMillis, debounceTime, tft);
+      handlePeqButtonPress(ch, 1, lastButtonPress, currentMillis, debounceTime, tft);
     }else if(isButtonPressed(x, y, b1)&& push == true){
-      handlePeqButtonPress(peq.b1, peq, 2, lastButtonPress, currentMillis, debounceTime, tft);
+      handlePeqButtonPress(ch, 2, lastButtonPress, currentMillis, debounceTime, tft);
     }else if(isButtonPressed(x, y, hp)&& push == true){
-      handlePeqButtonPress(peq.hp, peq, 3, lastButtonPress, currentMillis, debounceTime, tft);
+      handlePeqButtonPress(ch, 3, lastButtonPress, currentMillis, debounceTime, tft);
     }else if(isButtonPressed(x, y, b2)&& push == true){
-      handlePeqButtonPress(peq.b2, peq, 4, lastButtonPress, currentMillis, debounceTime, tft);
+      handlePeqButtonPress(ch, 4, lastButtonPress, currentMillis, debounceTime, tft);
     }else if(isButtonPressed(x, y, b3)&& push == true){
-      handlePeqButtonPress(peq.b3, peq, 5, lastButtonPress, currentMillis, debounceTime, tft);
+      handlePeqButtonPress(ch, 5, lastButtonPress, currentMillis, debounceTime, tft);
     }else if(isButtonPressed(x, y, hs)&& push == true){
-      handlePeqButtonPress(peq.hs, peq, 6, lastButtonPress, currentMillis, debounceTime, tft);
+      handlePeqButtonPress(ch, 6, lastButtonPress, currentMillis, debounceTime, tft);
     }else if(isButtonPressed(x, y, b4)&& push == true){
-      handlePeqButtonPress(peq.b4, peq, 7, lastButtonPress, currentMillis, debounceTime, tft);
+      handlePeqButtonPress(ch, 7, lastButtonPress, currentMillis, debounceTime, tft);
     }else if(isButtonPressed(x, y, lp)&& push == true){
-      handlePeqButtonPress(peq.hp, peq, 8, lastButtonPress, currentMillis, debounceTime, tft);
+      handlePeqButtonPress(ch, 8, lastButtonPress, currentMillis, debounceTime, tft);
     }else if(isButtonPressed(x, y, OnOff)&& push == true){
-      handlePeqButtonPress(peq.status, peq, 9, lastButtonPress, currentMillis, debounceTime, tft);
+      handlePeqButtonPress(ch, 9, lastButtonPress, currentMillis, debounceTime, tft);
+    }else if(isButtonPressed(x, y, HPF)&& push == true){
+      handlePeqButtonPress(ch, 10, lastButtonPress, currentMillis, debounceTime, tft);
+    }else if (isButtonPressed(x, y, HPFSLIDE)&& push == true ) {
+      handleHPFSlider(tft, y, ch.peqs[ch.active -1].hpfSlider, ch.peqs[ch.active -1]);
     }else {
       lastButtonPress = currentMillis;
     }
   }
+  
 }
-
-////Code dungeon for stuff that may or may not be important
-  ///Initially in the main loop before the touch event stuff 
-  /*
-  while (digitalRead(RA8875_INT))
-  {
-  }
-  */
