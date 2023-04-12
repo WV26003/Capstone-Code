@@ -10,14 +10,6 @@ unsigned long lastButtonPress = 0;
 Slider hpf_slide{720,720,160,460,-1,-1,0};
 channel ch;
 
-peq_buttons peq;
-peq_buttons peq1;
-peq_buttons peq2;
-peq_buttons peq3;
-peq_buttons peq4;
-peq_buttons peq5;
-peq_buttons peq6;
-
 tsbutton PEQSwitch{ 4, 114, 6, 66,0,1};
 tsbutton Input1{ 4, 114, 74, 134,0,2};
 tsbutton Input2{ 4, 114, 142, 202,0,3};

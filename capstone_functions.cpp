@@ -1,7 +1,7 @@
 /// Header
 #include <Arduino.h>
 #include "capstone_functions.h"
-#define BUTTON_DEBOUNCE_TIME 10
+#define BUTTON_DEBOUNCE_TIME 5
 #define DARK_GREEN 0x0640
  //Function Defintions
 void button_toggle(QwiicButton &button, bool &ledState){
@@ -445,7 +445,7 @@ void updateSliders(Adafruit_RA8875 &tft, peq_buttons &peq){
   if(peq.hpf){
     drawHPFSlider(tft,peq.hpfSlider.currentSliderPos, peq.hpfSlider);
   }else{
-      tft.fillRect(700, 160, 40, 300, RA8875_WHITE);
+      tft.fillRect(700, 140, 40, 330, RA8875_WHITE);
   }
 }
 void handleHPFSlider(Adafruit_RA8875 &tft, int y, Slider &slide, peq_buttons &peq) {
@@ -460,7 +460,7 @@ void handleHPFSlider(Adafruit_RA8875 &tft, int y, Slider &slide, peq_buttons &pe
     drawHPFSlider(tft, slide.currentSliderPos, slide);
     slide.lastSliderPos = slide.currentSliderPos;
   }else{
-      tft.fillRect(slide.x_begin-20, slide.y_end+10, 41, slide.y_begin - slide.y_end-20, RA8875_WHITE);
+      tft.fillRect(slide.x_begin-20, slide.y_end+30, 41, slide.y_begin - slide.y_end-20, RA8875_WHITE);
   }
 }
 
