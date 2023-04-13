@@ -1,0 +1,53 @@
+void encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encoder_position) {
+    int32_t new_position = -seesaw.getEncoderPosition(); // Changed the sign here
+    // did we move around?
+
+    Serial.print("NP: ");                                                   //For Testing Purposes
+    Serial.print(new_position);
+    Serial.print(", ");
+    Serial.print("EP: ");                                                   //For Testing Purposes
+    Serial.print(encoder_position);
+    Serial.println(", ");
+    
+    if (new_position == 0) {
+        amp.gain(0);
+    }
+
+    if (encoder_position != new_position) {
+        if ((new_position < 61) && (new_position > -1)) {
+            float position_math = new_position;
+            if (position_math <= 45) {                                                  //Segmenting the Fader into a lower 3/4 and an upper 1/4
+
+                float scaled_lower = (position_math/45);                                        //Obtaining a 0-1 percentage of the lower 3/4 of the fader
+                amp.gain(scaled_lower);                                                 //Input the previous value into the gain function to achieve an attentuation up to pass-through
+        
+                //float gain_lower = 20*log10(scaled_lower);
+                //Serial.print("GL: ");                                                 //For Testing Purposes
+                //Serial.print(gain_lower);
+                //Serial.println(", ");
+            }
+            else if (position_math > 45){                                                //Scaling the upper 1/4 of the fader
+                float min_val = 45;                        
+                float max_val = 60;
+                float scaled_upper = ((position_math/max_val) - (min_val/max_val));            //Obtaining a 0-1 percentage of the upper 1/4 of the fader
+  
+                float new_max_val = .25;                                            
+                float scaling_buffer = (1 + (2.16) * (scaled_upper/new_max_val));        //Scaling the .gain input between 1 and 3.16
+                amp.gain(scaling_buffer);                                                //Input the previous value into the gain function to achieve pass-through up to 10dB
+    
+                //float gain_upper = 20*log10(scaling_buffer);
+                //Serial.print("GU: ");                                                 //For Testing Purposes
+                //Serial.print(gain_upper);
+                //Serial.println(", ");
+            }
+    
+        }
+        encoder_position = new_position; // Changed the sign here
+    }
+    if (new_position > 60) {
+        seesaw.setEncoderPosition(-60); // Changed the sign here
+    }
+    else if (new_position < 0) {
+        seesaw.setEncoderPosition(0);
+    }
+}
