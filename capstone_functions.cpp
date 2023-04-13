@@ -102,7 +102,7 @@ float linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
 	//Serial.println(", ");
 	return scaling_buffer;
 	}
-	return 0;
+return 0;
 }
 
 
@@ -375,7 +375,7 @@ float encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encod
 		encoder_position = new_position;
 	}
 	if (new_position > 60) {
-		seesaw.setEncoderPosition(-60);
+		seesaw.setEncoderPosition(60);
 	}
 	else if (new_position < 0) {
 		seesaw.setEncoderPosition(0);
