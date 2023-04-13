@@ -1,13 +1,13 @@
-void encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encoder_position) {
+float encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encoder_position) {
     int32_t new_position = -seesaw.getEncoderPosition(); // Changed the sign here
     // did we move around?
 
-    Serial.print("NP: ");                                                   //For Testing Purposes
-    Serial.print(new_position);
-    Serial.print(", ");
-    Serial.print("EP: ");                                                   //For Testing Purposes
-    Serial.print(encoder_position);
-    Serial.println(", ");
+    //Serial.print("NP: ");                                                  //For Testing Purposes
+    //Serial.print(new_position);
+    //Serial.print(", ");
+    //Serial.print("EP: ");                                                  //For Testing Purposes
+    //Serial.print(encoder_position);
+    //Serial.println(", ");
     
     if (new_position == 0) {
         amp.gain(0);
@@ -23,8 +23,9 @@ void encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encode
         
                 //float gain_lower = 20*log10(scaled_lower);
                 //Serial.print("GL: ");                                                 //For Testing Purposes
-                //Serial.print(gain_lower);
-                //Serial.println(", ");
+                Serial.print(scaled_lower);
+                Serial.print(", ");
+                return scaled_lower;
             }
             else if (position_math > 45){                                                //Scaling the upper 1/4 of the fader
                 float min_val = 45;                        
@@ -37,17 +38,19 @@ void encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encode
     
                 //float gain_upper = 20*log10(scaling_buffer);
                 //Serial.print("GU: ");                                                 //For Testing Purposes
-                //Serial.print(gain_upper);
-                //Serial.println(", ");
+                Serial.print(scaling_buffer);
+                Serial.print(", ");
+                return scaling_buffer;
             }
     
         }
         encoder_position = new_position; // Changed the sign here
     }
     if (new_position > 60) {
-        seesaw.setEncoderPosition(-60); // Changed the sign here
+        seesaw.setEncoderPosition(60); // Changed the sign here
     }
     else if (new_position < 0) {
         seesaw.setEncoderPosition(0);
     }
+    return 0;
 }
