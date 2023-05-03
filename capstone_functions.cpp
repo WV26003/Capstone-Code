@@ -72,35 +72,20 @@ void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
 float linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
     uint16_t analog_read = seesaw.analogRead(analog_in);					//Reading in analog value
 	float buffer_1 = analog_read;											//Converting Analog Value to float
-
 	if (buffer_1 <= 767) {													//Segmenting the Fader into a lower 3/4 and an upper 1/4
 
-	float scaled_lower = (buffer_1/767);									//Obtaining a 0-1 percentage of the lower 3/4 of the fader
-	//Serial.print("SL: ");
-	//Serial.println(scaled_lower);
-	amp.gain(scaled_lower);													//Input the previous value into the gain function to achieve an attentuation up to pass-through
-	
-	//float gain_lower = 20*log10(scaled_lower);
-	//Serial.print("GL: ");													//For Testing Purposes
-	//Serial.print(gain_lower);
-    //Serial.println(", ");
-	return scaled_lower;
-	
+		float scaled_lower = (buffer_1/767);									//Obtaining a 0-1 percentage of the lower 3/4 of the fader
+		amp.gain(scaled_lower);													//Input the previous value into the gain function to achieve an attentuation up to pass-through
+		return scaled_lower;
 	}
-	else if (buffer_1 > 767){												//Scaling the upper 1/4 of the fader
-	float min_val = 767;						
-	float max_val = 1023;
-	float scaled_upper = ((buffer_1/max_val) - (min_val/max_val));			//Obtaining a 0-1 percentage of the upper 1/4 of the fader
-  
-	float new_max_val = .25;											
-	float scaling_buffer = (1 + (2.16) * (scaled_upper/new_max_val));		//Scaling the .gain input between 1 and 3.16
-	amp.gain(scaling_buffer);												//Input the previous value into the gain function to achieve pass-through up to 10dB
-	
-	//float gain_upper = 20*log10(scaling_buffer);
-	//Serial.print("GU: ");													//For Testing Purposes
-	//Serial.print(gain_upper);
-	//Serial.println(", ");
-	return scaling_buffer;
+	else{												//Scaling the upper 1/4 of the fader
+		float min_val = 767;						
+		float max_val = 1023;
+		float scaled_upper = ((buffer_1/max_val) - (min_val/max_val));			//Obtaining a 0-1 percentage of the upper 1/4 of the fader
+		float new_max_val = .25;											
+		float scaling_buffer = (1 + (2.16) * (scaled_upper/new_max_val));		//Scaling the .gain input between 1 and 3.16
+		amp.gain(scaling_buffer);												//Input the previous value into the gain function to achieve pass-through up to 10dB
+		return scaling_buffer;
 	}
 return 0;
 }
