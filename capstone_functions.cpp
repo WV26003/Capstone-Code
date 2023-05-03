@@ -219,47 +219,31 @@ void muting_status_array(seesaw_NeoPixel encoder_pixels[], bool muting_status[])
 void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, seesaw_NeoPixel encoder_pixels[], bool muting_status[]){
 	int numOn = 0;							//Counts the number of input channels on
 	for(size_t i = 0; i < 4; i++){
-        if(muting_status[i] == false){
+        	if(muting_status[i] == false){
 			numOn++;
 		}
-    }
-	//Serial.print(numOn);
-	//Serial.print(", ");
-	
-	
-	
+    	}
 	if(numOn != 0){							//Muting and scaling the gain of the appropriate input channels
-        //float numerator = 1;
-		//float gainVal = numerator/numOn;
-		//Serial.println(gainVal);
-		
 		for(size_t i = 0; i < 4; i++){
 			if(muting_status[i] == false){
-				
-            
-			mixer1.gain(i, 0.25);
-			mixer2.gain(i, 0.25);
+				mixer1.gain(i, 0.25);
+				mixer2.gain(i, 0.25);
 			}
-			else {
-            mixer1.gain(i, 0);
-			mixer2.gain(i, 0);
+			else{
+            			mixer1.gain(i, 0);
+				mixer2.gain(i, 0);
 			}
+        	}
+    	}
+	else {									//If no input channels are on (they are all muted) then mute all mixer channels	Zmixer1.gain(0, 0);
+		mixer1.gain(1, 0);
+		mixer1.gain(2, 0);
+		mixer1.gain(3, 0);	
+		mixer2.gain(0, 0);
+		mixer2.gain(1, 0);
+		mixer2.gain(2, 0);
+		mixer2.gain(3, 0);
         }
-    }
-	else {									//If no input channels are on (they are all muted) then mute all mixer channels
-            mixer1.gain(0, 0);
-			mixer1.gain(1, 0);
-			mixer1.gain(2, 0);
-			mixer1.gain(3, 0);
-			
-			mixer2.gain(0, 0);
-			mixer2.gain(1, 0);
-			mixer2.gain(2, 0);
-			mixer2.gain(3, 0);
-			
-			//Serial.println("0");
-        }
-
 }
 
 
@@ -299,49 +283,30 @@ void monitoring(AudioMixer4 &mixer3, AudioMixer4 &mixer4, bool monitoring_status
 
 float encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encoder_position) {
 	int32_t new_position = seesaw.getEncoderPosition();
-  	// did we move around?
-
-	//Serial.print("NP: ");													//For Testing Purposes
-	//Serial.print(new_position);
-	//Serial.print(", ");
-	//Serial.print("EP: ");													//For Testing Purposes
-	//Serial.print(encoder_position);
-	//Serial.println(", ");
-	
 	if (new_position == 0) {
 		amp.gain(0);
 	}
-
   	if (encoder_position != new_position) {
     		if ((new_position < 61) && (new_position > -1)) {
     			float position_math = new_position;
     			if (position_math <= 45) {													//Segmenting the Fader into a lower 3/4 and an upper 1/4
-
 				float scaled_lower = (position_math/45);										//Obtaining a 0-1 percentage of the lower 3/4 of the fader
-				amp.gain(scaled_lower);													//Input the previous value into the gain function to achieve an attentuation up to pass-through
-		
-				//float gain_lower = 20*log10(scaled_lower);
-				//Serial.print("GL: ");													//For Testing Purposes
+				amp.gain(scaled_lower);													//For Testing Purposes
 				Serial.print(scaled_lower);
 				Serial.print(", ");
 				return scaled_lower;
-				}
-				else if (position_math > 45){												//Scaling the upper 1/4 of the fader
+			}
+			else if (position_math > 45){												//Scaling the upper 1/4 of the fader
 				float min_val = 45;						
 				float max_val = 60;
 				float scaled_upper = ((position_math/max_val) - (min_val/max_val));			//Obtaining a 0-1 percentage of the upper 1/4 of the fader
-  
 				float new_max_val = .25;											
 				float scaling_buffer = (1 + (2.16) * (scaled_upper/new_max_val));		//Scaling the .gain input between 1 and 3.16
 				amp.gain(scaling_buffer);												//Input the previous value into the gain function to achieve pass-through up to 10dB
-	
-				//float gain_upper = 20*log10(scaling_buffer);
-				//Serial.print("GU: ");													//For Testing Purposes
 				Serial.print(scaling_buffer);
 				Serial.print(", ");
 				return scaling_buffer;
-				}
-	
+			}
     		}
 		encoder_position = new_position;
 	}
@@ -350,7 +315,7 @@ float encoder_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int32_t &encod
 	}
 	else if (new_position < 0) {
 		seesaw.setEncoderPosition(0);
-    }
+	}
 	return 0;
 }
 
