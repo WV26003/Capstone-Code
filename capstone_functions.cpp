@@ -55,20 +55,6 @@ void output_mix_mute_control(AudioAmplifier &amp, bool &state){
   	}
 }
 
-/*
-void linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
-    uint16_t analog_read = seesaw.analogRead(analog_in);
-    float fade = analog_read;
-    float scalar = (fade/1023)*3.16;
-    amp.gain(scalar);
-
-	//Serial.print(scalar);
-	//Serial.print(", ");
-}
-*/
-
-
-
 float linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
     uint16_t analog_read = seesaw.analogRead(analog_in);					//Reading in analog value
 	float buffer_1 = analog_read;											//Converting Analog Value to float
