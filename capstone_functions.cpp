@@ -235,7 +235,8 @@ void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, seesaw_NeoPixel enco
 			}
         	}
     	}
-	else {									//If no input channels are on (they are all muted) then mute all mixer channels	Zmixer1.gain(0, 0);
+	else {									//If no input channels are on (they are all muted) then mute all mixer channels	Z
+		mixer1.gain(0, 0);
 		mixer1.gain(1, 0);
 		mixer1.gain(2, 0);
 		mixer1.gain(3, 0);	
