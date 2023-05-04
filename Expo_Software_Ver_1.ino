@@ -549,7 +549,7 @@ Serial.println();
 
 //Muting Inputs with Encoder Buttons  
  muting_status_array(encoder_pixels, mute_status);
- input_muting(mixer1, mixer2, encoder_pixels, mute_status);
+ input_muting(mixer1, mixer2, mute_status);
 
 //Monitoring
   monitoring(mixer3, mixer4, QLEDState);
