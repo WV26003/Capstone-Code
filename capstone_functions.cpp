@@ -47,16 +47,16 @@ void output_unmute(AudioAmplifier &amp){
 
 //Controlling an amp object to toggle output muting
 void output_mix_mute_control(AudioAmplifier &amp, bool &state){
-  	if (state == true) {
-     		output_mute(amp);
-  	}
-  	else {
-    		output_unmute(amp);
+  	if (state == true) { //if the LED IS on
+     		output_mute(amp); // mute
+  	} 
+  	else { // If the LED is off
+    		output_unmute(amp); //unmute
   	}
 }
 
 float linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
-    uint16_t analog_read = seesaw.analogRead(analog_in);					//Reading in analog value
+    uint16_t analog_read = seesaw.analogRead(analog_in); 					//Reading in analog value
 	float buffer_1 = analog_read;											//Converting Analog Value to float
 	if (buffer_1 <= 767) {													//Segmenting the Fader into a lower 3/4 and an upper 1/4
 
@@ -180,10 +180,10 @@ if(b & SET1) do something
 //setting mute status array
 void muting_status_array(seesaw_NeoPixel encoder_pixels[], bool muting_status[]){
 	for(int i = 0; i < 4; ++i){
-		if(encode_pixels[i].getPixelColor(0) > 0){
-			muting_status[i] = true;
+		if(encode_pixels[i].getPixelColor(0) > 0){ //if the color is not black/off
+			muting_status[i] = true;  // set the muting status as true/on
 		}else{
-			muting_status[i]= false;
+			muting_status[i]= false; // set muting status as false/off
 		}
 	}													//If the pixel is on, the associated channel should be muted
 }
@@ -197,12 +197,12 @@ void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, bool muting_status[]
 	//Muting and unmutting of the appropriate input channels
 	for(size_t i = 0; i < 4; i++){
 		if(muting_status[i] == false){
-			mixer1.gain(i, 0.25);
-			mixer2.gain(i, 0.25);
+			mixer1.gain(i, 0.25); // unmute mixer 1 channels 
+			mixer2.gain(i, 0.25); // unmute mixer 2 channels
 		}
 		else{
-			mixer1.gain(i, 0);
-			mixer2.gain(i, 0);
+			mixer1.gain(i, 0); // mute mixer 1 channels
+			mixer2.gain(i, 0); // mute mixer 2 channels
 		}
 	}	
 }
@@ -210,8 +210,8 @@ void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, bool muting_status[]
 
 void monitoring(AudioMixer4 &mixer3, AudioMixer4 &mixer4, bool monitoring_status[]) {
 	
-	if (monitoring_status[4] == true || monitoring_status[5] == true) { 
-		for(size_t i = 4; i < 6; i++){
+	if (monitoring_status[4] == true || monitoring_status[5] == true) { // ensure no output/input crossmonitoring
+		for(size_t i = 4; i < 6; i++){ //iterate through the final 2 channels
 			int channel = (i - 3);
 			if(monitoring_status[i] == true){
 
@@ -226,7 +226,7 @@ void monitoring(AudioMixer4 &mixer3, AudioMixer4 &mixer4, bool monitoring_status
 	else {
 		mixer4.gain(1, 0);
 		mixer4.gain(2, 0);
-		for(size_t i = 0; i < 4; i++){
+		for(size_t i = 0; i < 4; i++){ // iterate through the channels on third mixer
 			if(monitoring_status[i] == true){
 				mixer3.gain(i, 0.25);
 				mixer4.gain(0, 1);
