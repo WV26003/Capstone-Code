@@ -77,7 +77,7 @@ void output_unmute(AudioAmplifier &amp);
 void output_mix_mute_control(AudioAmplifier &amp, bool &state);
 
 void muting_status_array(seesaw_NeoPixel encoder_pixels[], bool muting_status[]);
-void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, seesaw_NeoPixel encoder_pixels[], bool muting_status[]);
+void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, bool muting_status[]);
 
 //Monitoring Function
 void monitoring(AudioMixer4 &mixer3, AudioMixer4 &mixer4, bool monitoring_status[]);
