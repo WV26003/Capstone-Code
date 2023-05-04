@@ -64,7 +64,7 @@ float linear_fader(Adafruit_seesaw &seesaw, AudioAmplifier &amp, int analog_in){
 		amp.gain(scaled_lower);													//Input the previous value into the gain function to achieve an attentuation up to pass-through
 		return scaled_lower;
 	}
-	else{												//Scaling the upper 1/4 of the fader
+	else if(buffer_1 > 767){												//Scaling the upper 1/4 of the fader
 		float min_val = 767;						
 		float max_val = 1023;
 		float scaled_upper = ((buffer_1/max_val) - (min_val/max_val));			//Obtaining a 0-1 percentage of the upper 1/4 of the fader
