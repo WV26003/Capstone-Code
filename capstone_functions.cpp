@@ -191,35 +191,18 @@ void muting_status_array(seesaw_NeoPixel encoder_pixels[], bool muting_status[])
 
 
 //Input mute Control and mixer gain adjustment
-void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, seesaw_NeoPixel encoder_pixels[], bool muting_status[]){
-	int numOn = 0;							//Counts the number of input channels on
+void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, seesaw_NeoPixel encoder_pixels[], bool muting_status[]){		
+	//Muting and unmutting of the appropriate input channels
 	for(size_t i = 0; i < 4; i++){
-        	if(muting_status[i] == false){
-			numOn++;
+		if(muting_status[i] == false){
+			mixer1.gain(i, 0.25);
+			mixer2.gain(i, 0.25);
 		}
-    	}
-	if(numOn != 0){							//Muting and scaling the gain of the appropriate input channels
-		for(size_t i = 0; i < 4; i++){
-			if(muting_status[i] == false){
-				mixer1.gain(i, 0.25);
-				mixer2.gain(i, 0.25);
-			}
-			else{
-            			mixer1.gain(i, 0);
-				mixer2.gain(i, 0);
-			}
-        	}
-    	}
-	else {									//If no input channels are on (they are all muted) then mute all mixer channels	Z
-		mixer1.gain(0, 0);
-		mixer1.gain(1, 0);
-		mixer1.gain(2, 0);
-		mixer1.gain(3, 0);	
-		mixer2.gain(0, 0);
-		mixer2.gain(1, 0);
-		mixer2.gain(2, 0);
-		mixer2.gain(3, 0);
-        }
+		else{
+			mixer1.gain(i, 0);
+			mixer2.gain(i, 0);
+		}
+	}	
 }
 
 
