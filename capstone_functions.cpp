@@ -150,7 +150,9 @@ void toggleNeoPixel(seesaw_NeoPixel &neopixel) {
 }
 
 
-void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &LEDState, uint32_t &lastDebounceTime, bool &lastButtonState) {
+void encoder_button(Adafruit_seesaw &seesaw, seesaw_NeoPixel &neopixel, int SS_SWITCH, int SS_NEOPIX, bool &LEDState, 
+		    uint32_t &lastDebounceTime, bool &lastButtonState) 
+{
     bool encoderButtonPressed = readEncoderButton(seesaw, SS_SWITCH);
     bool stateChanged = debounceButton(encoderButtonPressed, LEDState, lastDebounceTime, lastButtonState);
 
