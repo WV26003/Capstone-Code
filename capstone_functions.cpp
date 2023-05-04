@@ -191,7 +191,7 @@ void muting_status_array(seesaw_NeoPixel encoder_pixels[], bool muting_status[])
 
 
 //Input mute Control and mixer gain adjustment
-void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, seesaw_NeoPixel encoder_pixels[], bool muting_status[]){		
+void input_muting(AudioMixer4 &mixer1, AudioMixer4 &mixer2, bool muting_status[]){		
 	//Muting and unmutting of the appropriate input channels
 	for(size_t i = 0; i < 4; i++){
 		if(muting_status[i] == false){
