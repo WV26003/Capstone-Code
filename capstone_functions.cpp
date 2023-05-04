@@ -177,38 +177,13 @@ if(b & SET1) do something
 
 //setting mute status array
 void muting_status_array(seesaw_NeoPixel encoder_pixels[], bool muting_status[]){
-													//If the pixel is on, the associated channel should be muted
-	if (encoder_pixels[0].getPixelColor(0) > 0) {
-		muting_status[0] = true;
-	}
-	else {
-		muting_status[0] = false;
-	}
-
-	if (encoder_pixels[1].getPixelColor(0) > 0) {
-		muting_status[1] = true;
-	}
-	else {
-		muting_status[1] = false;
-	}
-
-	if (encoder_pixels[2].getPixelColor(0) > 0) {
-		muting_status[2] = true;
-	}
-	else {
-		muting_status[2] = false;
-	}
-
-	if (encoder_pixels[3].getPixelColor(0) > 0) {
-		muting_status[3] = true;
-	}
-	else {
-		muting_status[3] = false;
-	}
-	//Serial.print(muting_status[0]);
-	//Serial.print(muting_status[1]);
-	//Serial.print(muting_status[2]);
-	//Serial.println(muting_status[3]);
+	for(int i = 0; i < 4; ++i){
+		if(encode_pixels[i].getPixelColor(0) > 0){
+			muting_status[i] = true;
+		}else{
+			muting_status[i]= false;
+		}
+	}													//If the pixel is on, the associated channel should be muted
 }
 
 
