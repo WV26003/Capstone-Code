@@ -907,140 +907,130 @@ void printMenu(Adafruit_RA8875 tft){
 
  
 void level_indication(float level[], int scaled_start[], int scaled_extension[], Adafruit_RA8875 tft) {
+	for (size_t i = 0; i < 10; i++){
+	  scaled_start[i] = round(106 + 294*(1 - level[i]));
+	  scaled_extension[i] = round(294*level[i]);
+	}
+	  delay(50);
+	  if ((level[0] < 0.02)) {
+	    tft.fillRect(206, 106, 31, 294, RA8875_WHITE);
+	  }
+	  else if ((level[0] > 0.02) && (level[0] < 0.91)){
+	    tft.fillRect(206, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(206, scaled_start[0], 31, scaled_extension[0], RA8875_BLUE);
+	  }
+	  else if ((level[0] > 0.90)){
+	    tft.fillRect(206, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(206, scaled_start[0], 31, scaled_extension[0], RA8875_RED);
+	  }
 
+	  if ((level[1] < 0.02)) {
+	    tft.fillRect(267, 106, 31, 294, RA8875_WHITE);
+	  }
+	  else if ((level[1] > 0.02) && (level[1] < 0.91)){
+	    tft.fillRect(267, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(267, scaled_start[1], 31, scaled_extension[1], RA8875_BLUE);
+	  }
+	  else if ((level[1] > 0.90)){
+	    tft.fillRect(267, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(267, scaled_start[1], 31, scaled_extension[1], RA8875_RED);
+	  }
 
-for (size_t i = 0; i < 10; i++){
-  scaled_start[i] = round(106 + 294*(1 - level[i]));
-  scaled_extension[i] = round(294*level[i]);
-}
+	  if ((level[2] < 0.02)) {
+	    tft.fillRect(328, 106, 31, 294, RA8875_WHITE);
+	  }
+	  else if ((level[2] > 0.02) && (level[2] < 0.91)){
+	    tft.fillRect(328, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(328, scaled_start[2], 31, scaled_extension[2], RA8875_BLUE);
+	  }
+	  else if ((level[2] > 0.90)){
+	    tft.fillRect(328, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(328, scaled_start[2], 31, scaled_extension[2], RA8875_RED);
+	  }
 
-  //Serial.print(", L: ");
-  //Serial.print(level[0]);
-  
-  //Serial.print(", SL: ");
-  //Serial.println(scaled_start[0]);
+	  if ((level[3] < 0.02)) {
+	    tft.fillRect(389, 106, 31, 294, RA8875_WHITE);
+	  }
+	  else if ((level[3] > 0.02) && (level[3] < 0.91)){
+	    tft.fillRect(389, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(389, scaled_start[3], 31, scaled_extension[3], RA8875_BLUE);
+	  }
+	  else if ((level[3] > 0.90)){
+	    tft.fillRect(389, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(389, scaled_start[3], 31, scaled_extension[3], RA8875_RED);
+	  }
 
-  delay(50);
+	  if ((level[4] < 0.02)) {
+	    tft.fillRect(450, 106, 31, 294, RA8875_WHITE);
+	  }
+	  else if ((level[4] > 0.02) && (level[4] < 0.91)){
+	    tft.fillRect(450, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(450, scaled_start[4], 31, scaled_extension[4], RA8875_MAGENTA);
+	  }
+	  else if ((level[4] > 0.90)){
+	    tft.fillRect(450, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(450, scaled_start[4], 31, scaled_extension[4], RA8875_RED);
+	  }
 
-  if ((level[0] < 0.02)) {
-    tft.fillRect(206, 106, 31, 294, RA8875_WHITE);
-  }
-  else if ((level[0] > 0.02) && (level[0] < 0.91)){
-    tft.fillRect(206, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(206, scaled_start[0], 31, scaled_extension[0], RA8875_BLUE);
-  }
-  else if ((level[0] > 0.90)){
-    tft.fillRect(206, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(206, scaled_start[0], 31, scaled_extension[0], RA8875_RED);
-  }
-  
-  if ((level[1] < 0.02)) {
-    tft.fillRect(267, 106, 31, 294, RA8875_WHITE);
-  }
-  else if ((level[1] > 0.02) && (level[1] < 0.91)){
-    tft.fillRect(267, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(267, scaled_start[1], 31, scaled_extension[1], RA8875_BLUE);
-  }
-  else if ((level[1] > 0.90)){
-    tft.fillRect(267, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(267, scaled_start[1], 31, scaled_extension[1], RA8875_RED);
-  }
+	  if ((level[5] < 0.02)) {
+	    tft.fillRect(511, 106, 31, 294, RA8875_WHITE);
+	  }
+	  else if ((level[5] > 0.02) && (level[5] < 0.91)){
+	    tft.fillRect(511, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(511, scaled_start[5], 31, scaled_extension[5], RA8875_MAGENTA);
+	  }
+	  else if ((level[5] > 0.90)){
+	    tft.fillRect(511, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(511, scaled_start[5], 31, scaled_extension[5], RA8875_RED);
+	  }
 
-  if ((level[2] < 0.02)) {
-    tft.fillRect(328, 106, 31, 294, RA8875_WHITE);
-  }
-  else if ((level[2] > 0.02) && (level[2] < 0.91)){
-    tft.fillRect(328, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(328, scaled_start[2], 31, scaled_extension[2], RA8875_BLUE);
-  }
-  else if ((level[2] > 0.90)){
-    tft.fillRect(328, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(328, scaled_start[2], 31, scaled_extension[2], RA8875_RED);
-  }
+	  if ((level[6] < 0.02)) {
+	    tft.fillRect(572, 106, 31, 294, RA8875_WHITE);
+	  }
+	  else if ((level[6] > 0.02) && (level[6] < 0.91)){
+	    tft.fillRect(572, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(572, scaled_start[6], 31, scaled_extension[6], RA8875_MAGENTA);
+	  }
+	  else if ((level[6] > 0.90)){
+	    tft.fillRect(572, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(572, scaled_start[6], 31, scaled_extension[6], RA8875_RED);
+	  }
 
-  if ((level[3] < 0.02)) {
-    tft.fillRect(389, 106, 31, 294, RA8875_WHITE);
-  }
-  else if ((level[3] > 0.02) && (level[3] < 0.91)){
-    tft.fillRect(389, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(389, scaled_start[3], 31, scaled_extension[3], RA8875_BLUE);
-  }
-  else if ((level[3] > 0.90)){
-    tft.fillRect(389, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(389, scaled_start[3], 31, scaled_extension[3], RA8875_RED);
-  }
+	  if ((level[7] < 0.02)) {
+	    tft.fillRect(633, 106, 31, 294, RA8875_WHITE);
+	  }
+	  else if ((level[7] > 0.02) && (level[7] < 0.91)){
+	    tft.fillRect(633, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(633, scaled_start[7], 31, scaled_extension[7], RA8875_MAGENTA);
+	  }
+	  else if ((level[7] > 0.90)){
+	    tft.fillRect(633, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(633, scaled_start[7], 31, scaled_extension[7], RA8875_RED);
+	  }
 
-  if ((level[4] < 0.02)) {
-    tft.fillRect(450, 106, 31, 294, RA8875_WHITE);
-  }
-  else if ((level[4] > 0.02) && (level[4] < 0.91)){
-    tft.fillRect(450, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(450, scaled_start[4], 31, scaled_extension[4], RA8875_MAGENTA);
-  }
-  else if ((level[4] > 0.90)){
-    tft.fillRect(450, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(450, scaled_start[4], 31, scaled_extension[4], RA8875_RED);
-  }
+	  if ((level[8] < 0.02)) {
+	    tft.fillRect(694, 106, 31, 294, RA8875_WHITE);
+	  }
+	  else if ((level[8] > 0.02) && (level[8] < 0.91)){
+	    tft.fillRect(694, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(694, scaled_start[8], 31, scaled_extension[8], RA8875_BLUE);
+	  }
+	  else if ((level[8] > 0.90)){
+	    tft.fillRect(694, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(694, scaled_start[8], 31, scaled_extension[8], RA8875_RED);
+	  }
 
-  if ((level[5] < 0.02)) {
-    tft.fillRect(511, 106, 31, 294, RA8875_WHITE);
-  }
-  else if ((level[5] > 0.02) && (level[5] < 0.91)){
-    tft.fillRect(511, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(511, scaled_start[5], 31, scaled_extension[5], RA8875_MAGENTA);
-  }
-  else if ((level[5] > 0.90)){
-    tft.fillRect(511, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(511, scaled_start[5], 31, scaled_extension[5], RA8875_RED);
-  }
+	  if ((level[9] < 0.02)) {
+	    tft.fillRect(755, 106, 31, 294, RA8875_WHITE);
+	  }
+	  else if ((level[9] > 0.02) && (level[9] < 0.91)){
+	    tft.fillRect(755, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(755, scaled_start[9], 31, scaled_extension[9], RA8875_MAGENTA);
+	  }
+	  else if ((level[9] > 0.90)){
+	    tft.fillRect(755, 106, 31, 294, RA8875_WHITE);
+	    tft.fillRect(755, scaled_start[9], 31, scaled_extension[9], RA8875_RED);
+	  }
 
-  if ((level[6] < 0.02)) {
-    tft.fillRect(572, 106, 31, 294, RA8875_WHITE);
-  }
-  else if ((level[6] > 0.02) && (level[6] < 0.91)){
-    tft.fillRect(572, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(572, scaled_start[6], 31, scaled_extension[6], RA8875_MAGENTA);
-  }
-  else if ((level[6] > 0.90)){
-    tft.fillRect(572, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(572, scaled_start[6], 31, scaled_extension[6], RA8875_RED);
-  }
-
-  if ((level[7] < 0.02)) {
-    tft.fillRect(633, 106, 31, 294, RA8875_WHITE);
-  }
-  else if ((level[7] > 0.02) && (level[7] < 0.91)){
-    tft.fillRect(633, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(633, scaled_start[7], 31, scaled_extension[7], RA8875_MAGENTA);
-  }
-  else if ((level[7] > 0.90)){
-    tft.fillRect(633, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(633, scaled_start[7], 31, scaled_extension[7], RA8875_RED);
-  }
- 
-  if ((level[8] < 0.02)) {
-    tft.fillRect(694, 106, 31, 294, RA8875_WHITE);
-  }
-  else if ((level[8] > 0.02) && (level[8] < 0.91)){
-    tft.fillRect(694, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(694, scaled_start[8], 31, scaled_extension[8], RA8875_BLUE);
-  }
-  else if ((level[8] > 0.90)){
-    tft.fillRect(694, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(694, scaled_start[8], 31, scaled_extension[8], RA8875_RED);
-  }
-
-  if ((level[9] < 0.02)) {
-    tft.fillRect(755, 106, 31, 294, RA8875_WHITE);
-  }
-  else if ((level[9] > 0.02) && (level[9] < 0.91)){
-    tft.fillRect(755, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(755, scaled_start[9], 31, scaled_extension[9], RA8875_MAGENTA);
-  }
-  else if ((level[9] > 0.90)){
-    tft.fillRect(755, 106, 31, 294, RA8875_WHITE);
-    tft.fillRect(755, scaled_start[9], 31, scaled_extension[9], RA8875_RED);
-  }
-  
 
 }
